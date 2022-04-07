@@ -11,11 +11,11 @@ module.exports = {
           test: /Worklet.js/, // <---- change this to match your filename conventions
           loader: "worklet-loader",
           options: {
-            name: "js/[hash].worklet.js",
-          },
-        },
-      ],
-    },
+            name: "js/[hash].worklet.js"
+          }
+        }
+      ]
+    }
   },
 
   /*
@@ -31,8 +31,8 @@ module.exports = {
     },
 
 */
-  chainWebpack: (config) => {
-    config.plugin("html").tap((args) => {
+  chainWebpack: config => {
+    config.plugin("html").tap(args => {
       const tmp = args[0];
       tmp.template = "src/index.html";
       //tmp.favicon = "src/assets/icons/favicon.ico";
@@ -46,4 +46,6 @@ module.exports = {
       .loader("file-loader")
       .end();
   },
+
+  transpileDependencies: ["vuetify"]
 };

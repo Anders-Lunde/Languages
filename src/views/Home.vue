@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="XX LANGUAGES - TEST" />
+    <HelloWorld msg="X X LANGUAGES - TEST" />
   </div>
 </template>
 
@@ -12,7 +12,7 @@ import HelloWorld from "@/components/HelloWorld.vue";
 export default {
   name: "Home",
   components: {
-    HelloWorld,
-  },
+    HelloWorld
+  }
 };
 </script>
