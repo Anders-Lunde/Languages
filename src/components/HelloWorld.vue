@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Asd</h1>
+    <h1 class="ansdjkasnjkd">Hellow World</h1>
   </div>
 </template>
 
@@ -17,3 +17,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style scoped>
+.ansdjkasnjkd {
+  background-color: plum;
+}
+</style>
