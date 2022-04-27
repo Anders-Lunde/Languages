@@ -3,8 +3,8 @@
     <h1 class="heading">LANGUAGES</h1>
     <h2 class="heading2">Select your language / Velg ønsket språk</h2>
 
-    <v-card color="grey lighten-3" class="mb-12" height="200px">
-      <v-container class="px-0" fluid>
+    <v-container fluid>
+      <v-card color="grey lighten-3" class="mb-10">
         <v-radio-group
           v-model="radioGroupDisplayLanguage"
           @change="setDisplayLanguage()"
@@ -12,8 +12,8 @@
           <v-radio label="English" value="en"></v-radio>
           <v-radio label="Norsk" value="no"></v-radio>
         </v-radio-group>
-      </v-container>
-    </v-card>
+      </v-card>
+    </v-container>
 
     <v-btn color="primary" @click="$router.push('register-info')">
       {{ btnNext }}
