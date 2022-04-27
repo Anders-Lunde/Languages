@@ -1,24 +1,7 @@
 # languages-frontend
 
-## Project setup
-```
-npm install
-```
+## Fixed vuetify radiobuttons etc not showing up:
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+https://stackoverflow.com/questions/57505666/in-vuetify-radio-is-not-shown
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
