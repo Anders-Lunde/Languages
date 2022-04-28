@@ -21,6 +21,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn
+              :disabled="radioGroupDisplayLanguage.length == 0"
               class="mx-auto"
               color="primary"
               @click="$router.push('intro-video')"
@@ -73,7 +74,7 @@ export default Vue.extend({
     return {
       dummy: 0,
       e6: 1,
-      radioGroupDisplayLanguage: "en"
+      radioGroupDisplayLanguage: ""
     };
   },
 
