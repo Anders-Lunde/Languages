@@ -195,9 +195,9 @@ export default Vue.extend({
         console.log("Valid form detected");
         //Save form to vuex
         this.$store.state.country = this.country;
-        this.$store.state.country = this.school;
-        this.$store.state.country = this.fullname;
-        this.$store.state.country = this.email;
+        this.$store.state.school = this.school;
+        this.$store.state.fullname = this.fullname;
+        this.$store.state.email = this.email;
         //Goto test
         this.$router.push("vocabulary-test");
       }

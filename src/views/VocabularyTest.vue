@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1>Yo</h1>
+    <h1>YO</h1>
+    <p>{{ words }}</p>
   </div>
 </template>
 
@@ -18,7 +19,8 @@ export default Vue.extend({
   props: {},
   data() {
     return {
-      dummy: 0
+      bands: ["c1c5", "c6c10", "c11c15", "c16c20", "k3k4"],
+      words: this.$store.state.words
     };
   },
 
