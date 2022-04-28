@@ -17,3 +17,18 @@ export default Vue.extend({
   })
 });
 </script>
+
+<style>
+body {
+  /*
+  margin-left: 1rem;
+  margin-right: 1rem;
+  */
+}
+
+.heading1 {
+  text-align: center;
+  color: rgb(22, 151, 246);
+  margin: 1rem;
+}
+</style>

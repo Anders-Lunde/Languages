@@ -1,23 +1,35 @@
 <template>
-  <div class="body">
-    <h1 class="heading">LANGUAGES</h1>
-    <h2 class="heading2">Select your language / Velg ønsket språk</h2>
-
-    <v-container fluid>
-      <v-card color="grey lighten-3" class="mb-10">
-        <v-radio-group
-          v-model="radioGroupDisplayLanguage"
-          @change="setDisplayLanguage()"
-        >
-          <v-radio label="English" value="en"></v-radio>
-          <v-radio label="Norsk" value="no"></v-radio>
-        </v-radio-group>
-      </v-card>
+  <div>
+    <h1 class="heading1">LANGUAGES</h1>
+    <v-container>
+      <v-row>
+        <v-card class="mx-auto">
+          <v-card-title>
+            <span class="text-h5 mx-auto font-weight-light"
+              >Select your language / Velg ønsket språk</span
+            >
+          </v-card-title>
+          <v-card-text>
+            <v-radio-group
+              v-model="radioGroupDisplayLanguage"
+              @change="setDisplayLanguage()"
+            >
+              <v-radio label="English" value="en"></v-radio>
+              <v-radio label="Norsk" value="no"></v-radio>
+            </v-radio-group>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              class="mx-auto"
+              color="primary"
+              @click="$router.push('intro-video')"
+            >
+              {{ btnNext }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-row>
     </v-container>
-
-    <v-btn color="primary" @click="$router.push('register-info')">
-      {{ btnNext }}
-    </v-btn>
   </div>
 </template>
 
@@ -81,19 +93,4 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
-.body {
-  margin-left: 1rem;
-}
-
-.heading {
-  text-align: center;
-  color: rgb(22, 151, 246);
-  margin: 1rem;
-}
-.heading2 {
-  text-align: center;
-  color: rgb(0, 0, 0);
-  margin: 1rem;
-}
-</style>
+<style scoped></style>
