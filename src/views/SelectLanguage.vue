@@ -5,7 +5,7 @@
       <v-row>
         <v-card class="mx-auto" max-width="96%">
           <v-card-title>
-            <span class="text-h5 mx-auto font-weight-light"
+            <span class="text-h5 mx-auto font-weight-light "
               >Select your language / Velg ønsket språk</span
             >
           </v-card-title>
@@ -13,6 +13,7 @@
             <v-radio-group
               v-model="radioGroupDisplayLanguage"
               @change="setDisplayLanguage()"
+              required
             >
               <v-radio label="English" value="en"></v-radio>
               <v-radio label="Norsk" value="no"></v-radio>
@@ -93,4 +94,9 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.v-card__text,
+.v-card__title {
+  word-break: normal; /* maybe !important  */
+}
+</style>
