@@ -41,8 +41,8 @@ const routes: Array<RouteConfig> = [
 
 const router = new VueRouter({
   routes,
-
-  scrollBehavior(to, from, savedPosition) {
+  //Always scroll to top
+  scrollBehavior() {
     return { x: 0, y: 0 };
   }
 });

@@ -5,7 +5,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    displayLanguage: "en"
+    displayLanguage: "en",
+    country: "",
+    school: "",
+    fullname: "",
+    email: ""
   },
   mutations: {},
   actions: {},

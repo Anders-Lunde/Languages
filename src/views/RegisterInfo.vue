@@ -193,7 +193,12 @@ export default Vue.extend({
       this.nextPressed = true;
       if (this.$refs.form.validate()) {
         console.log("Valid form detected");
-        //todo: save form to vuex
+        //Save form to vuex
+        this.$store.state.country = this.country;
+        this.$store.state.country = this.school;
+        this.$store.state.country = this.fullname;
+        this.$store.state.country = this.email;
+        //Goto test
         this.$router.push("vocabulary-test");
       }
     }

@@ -73,7 +73,6 @@ export default Vue.extend({
   data() {
     return {
       dummy: 0,
-      e6: 1,
       radioGroupDisplayLanguage: ""
     };
   },
