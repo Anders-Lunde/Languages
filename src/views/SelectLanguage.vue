@@ -1,9 +1,9 @@
 <template>
   <div>
     <h1 class="heading1">LANGUAGES</h1>
-    <v-container>
+    <v-container fluid>
       <v-row>
-        <v-card class="mx-auto">
+        <v-card class="mx-auto" max-width="96%">
           <v-card-title>
             <span class="text-h5 mx-auto font-weight-light"
               >Select your language / Velg ønsket språk</span
