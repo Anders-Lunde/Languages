@@ -5,6 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    isPilot: true,
+    grade: "grade9", //Can only be "grade9" or "grade10". Affects mounted() in main component
     displayLanguage: "en",
     country: "",
     school: "",

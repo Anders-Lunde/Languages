@@ -9,14 +9,57 @@
                 capitalize(currentWord)
               }}</span>
             </v-card-title>
-            <v-card-text> </v-card-text>
+            <v-card-text>
+              msg: {{ feedbackMessage }}
+              <br />
+              vocabularySize: {{ vocabularySize }}
+              <br />
+              currentWord: {{ currentWord }}
+              <br />
+              currentWordIndex: {{ currentWordIndex }}
+              <br />
+              currentBandIndex: {{ currentBandIndex }}
+              <br />
+              currentSetIndex: {{ currentSetIndex }}
+              <br />
+              currentUserAllDataMap: {{ currentSetIndex }}
+              <br />
+              isFullStopOfTest: {{ isFullStopOfTest }}
+              <br />
+            </v-card-text>
             <v-card-actions class="mt-10">
               <v-spacer></v-spacer>
-              <v-btn large @click="onResponse(false)" outlined text>
+              <!-- OK button between sets -->
+              <v-btn
+                v-if="isSetDone"
+                large
+                @click="setDoneOkBtn()"
+                color="primary"
+              >
+                {{ btnSetDoneOk }}
+              </v-btn>
+              <!-- No button -->
+
+              <v-btn
+                v-if="!isSetDone"
+                large
+                @click="onResponse(false)"
+                outlined
+                text
+              >
                 {{ btnNo }}
               </v-btn>
-              <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
-              <v-btn large @click="onResponse(true)" color="primary">
+              <v-spacer v-if="!isSetDone"></v-spacer
+              ><v-spacer v-if="!isSetDone"></v-spacer
+              ><v-spacer v-if="!isSetDone"></v-spacer>
+              <!-- Yes button -->
+
+              <v-btn
+                v-if="!isSetDone"
+                large
+                @click="onResponse(true)"
+                color="primary"
+              >
                 {{ btnYes }}
               </v-btn>
               <v-spacer></v-spacer>
@@ -42,9 +85,6 @@ export default Vue.extend({
     //dummy
   },
   computed: {
-    currentWord() {
-      return this.words.c1c5.set1.real[0];
-    },
     dispLang() {
       return this.$store.state.displayLanguage;
     },
@@ -62,23 +102,31 @@ export default Vue.extend({
       } else {
         return "No";
       }
+    },
+    btnSetDoneOk() {
+      if (this.dispLang == "no") {
+        return "OK";
+      } else {
+        return "OK";
+      }
     }
   },
   props: {},
   data() {
     return {
-      s1:
-        "Gratulerer! Du kan ca. x ord på fransk. Ta en ny test for å bekrefte resultatet ditt.",
-      s2:
-        "Gratulerer! Du kan ca. x ord på fransk. Ta neste test for å utforske nivået ditt.",
-      currentBand: 0,
-      currentSet: 0,
-      currentSequence: [],
-      currentSequenceUserAnser: [],
-      currentSequenceKey: [],
+      currentWord: "placeholder",
+      currentWordIndex: 0,
+      currentBandIndex: 0, //Always start with bottom band
+      currentSetIndex: 0, //This is set in mounted(), depending on grade9/10 as 0 or 2. (grade 10 starts with set 3)
+      currentUserAllDataMap: {},
+      isSetDone: false,
+      isFullStopOfTest: false,
+      feedbackMessage: "",
       bands: ["c1c5", "c6c10", "c11c15", "c16c20", "k3k4"],
       sets: ["set1", "set2", "set3", "set4", "set5"],
-      words: this.$store.state.words
+      words: this.$store.state.words,
+      //For debug:
+      vocabularySize: 0
     };
   },
 
@@ -86,35 +134,78 @@ export default Vue.extend({
     /*
      *METHOD START:
      */
+    setDoneOkBtn() {
+      this.isSetDone = false;
+      this.feedbackMessage = "";
+    },
+
+    /*
+     *METHOD START:
+     */
+    setNextWord() {
+      const currentBand = this.bands[this.currentBandIndex];
+      const currentSet = this.sets[this.currentSetIndex];
+      this.currentWord = this.currentUserAllDataMap[currentBand][currentSet][
+        this.currentWordIndex
+      ].word;
+    },
+
+    /*
+     *METHOD START:
+     */
     generateSequence: function() {
-      const band = this.bands[0];
-      const set = this.sets[0];
+      console.log("Starting generateSequence()");
+      this.isSetDone = false;
+      const currentBand = this.bands[this.currentBandIndex];
+      const currentSet = this.sets[this.currentSetIndex];
 
-      const real = this.words[band][set].real;
-      const nonsense = this.words[band][set].nonsense;
+      const real = this.words[currentBand][currentSet].real;
+      const nonsense = this.words[currentBand][currentSet].nonsense;
 
-      const map = {};
-      // function range(start, end) {
-      //   return Array(end - start + 1)
-      //     .fill()
-      //     .map((_, idx) => start + idx);
-      // }
+      /* GENERATE A MAP THAT LOOKS LIKE THIS WHEN FILLED.
+      FILLED SEQUENTIOALLY, AFTER EACH BAND COMPLETES.
+      const map = {
+        c1c5: {
+          set1: [
+            {
+            word: ,
+            isReal: ,
+            userAnswer: ,
+            randomIndex: ,
+            originalIndex: ,
+
+            },
+            {...}
+          ],
+          set2: []
+        },
+        c6c10: {},
+        c11c15: {},
+      };
+        */
       // console.log(range(0, 30));
       // prettier-ignore
-      let indexArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
-      indexArray = this.shuffle(indexArray);
+      const indexArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+      const indexArrayRandomized = this.shuffle(indexArray);
       const combined = [...real, ...nonsense];
 
+      const array = [];
       for (let i = 0; i < 30; i++) {
-        console.log(combined[i]);
+        const tmp = {};
+        tmp.userAnswer = null;
+        tmp.orderAsPresented = i;
+        const rndIndex = indexArrayRandomized[i];
+        tmp.word = combined[rndIndex];
+        tmp.isReal = rndIndex < 20;
+        tmp.indexInCombinedArray = rndIndex;
+        tmp.score = 0;
+        array.push(tmp);
       }
-
-      console.log(real);
-      console.log(nonsense);
-
-      //  currentSequence: [],
-      // currentSequenceUserAnser: [],
-      // currentSequenceKey: [],
+      if (this.currentUserAllDataMap[currentBand] == null) {
+        this.currentUserAllDataMap[currentBand] = {};
+      }
+      this.currentUserAllDataMap[currentBand][currentSet] = array;
+      console.log("Generate data success!");
     },
 
     /*
@@ -122,6 +213,153 @@ export default Vue.extend({
      */
     onResponse: function(response) {
       console.log("Response: ", response);
+      const currentBand = this.bands[this.currentBandIndex];
+      const currentSet = this.sets[this.currentSetIndex];
+      //Record response
+      this.currentUserAllDataMap[currentBand][currentSet][
+        this.currentWordIndex
+      ].userAnswer = response;
+
+      //Record score
+      const isRealWord = this.currentUserAllDataMap[currentBand][currentSet][
+        this.currentWordIndex
+      ].isReal;
+      if (isRealWord && response == true) {
+        this.currentUserAllDataMap[currentBand][currentSet][
+          this.currentWordIndex
+        ].score = 1;
+      } else if (!isRealWord && response == true) {
+        this.currentUserAllDataMap[currentBand][currentSet][
+          this.currentWordIndex
+        ].score = -2;
+      }
+
+      //Iterate
+      this.currentWordIndex += 1;
+
+      const currentUserWordArray = this.currentUserAllDataMap[currentBand][
+        currentSet
+      ];
+
+      if (this.currentWordIndex >= currentUserWordArray.length) {
+        this.isSetDone = true;
+      }
+      //If done/not done
+      if (!this.isSetDone) {
+        this.setNextWord();
+        return; //RETURN
+      }
+
+      //Else, if set is done:
+      //Calc total score
+      let totalScore = 0;
+
+      for (const e in currentUserWordArray) {
+        totalScore += e.score;
+      }
+      //Calc vocabulary size
+      const MaxScore = 20;
+      const PercentageForThisBand = (totalScore / MaxScore) * 100;
+      let vocabularySize = 0;
+      if (this.currentBandIndex == 0) {
+        vocabularySize = Math.round(500 * PercentageForThisBand);
+      } else if (this.currentBandIndex == 1) {
+        vocabularySize = Math.round(1000 * PercentageForThisBand);
+      } else if (this.currentBandIndex == 2) {
+        vocabularySize = Math.round(1500 * PercentageForThisBand);
+      } else if (this.currentBandIndex == 3) {
+        vocabularySize = Math.round(2000 * PercentageForThisBand);
+      } else if (this.currentBandIndex == 4) {
+        vocabularySize = Math.round(3000 * PercentageForThisBand);
+      } else {
+        alert("ERROR: SOMETHING WENT WRONG WITH CALCULATING VOCABULARY SIZE");
+        vocabularySize =
+          "ERROR: SOMETHING WENT WRONG WITH CALCULATING VOCABULARY SIZE";
+      }
+
+      this.vocabularySize = vocabularySize;
+
+      const CUTOFF = 70;
+      const isPilot = this.$store.state.grade.isPilot;
+      const firstOfTwoSetsAndPilot =
+        [0, 2].includes(this.currentSetIndex) && isPilot;
+      let msg = "";
+
+      //       s1:
+      //   "Gratulerer! Du kan ca. x ord på fransk. Ta en ny test for å bekrefte resultatet ditt.",
+      // s2:
+      //   "Gratulerer! Du kan ca. x ord på fransk. Ta neste test for å utforske nivået ditt.",
+
+      // if (this.dispLang == "no") {
+      //             message = "";
+      //           } else {
+      //             message = "";
+      //           }
+
+      //CASE 1: If passed the test
+      if (PercentageForThisBand >= CUTOFF) {
+        //If this is pilot, and the first of two sets to be forced to take
+        if (firstOfTwoSetsAndPilot) {
+          msg =
+            "Gratulerer! Du kan ca. x ord på fransk. Ta en ny test for å bekrefte resultatet ditt.";
+        } else {
+          msg =
+            "Gratulerer! Du kan ca. x ord på fransk. Ta neste test for å utforske nivået ditt.";
+        }
+      }
+      //CASE 2: If NOT passed the test, but with positive score
+      else if (PercentageForThisBand > 0) {
+        //If pilot, always force a possible second set, even when low score
+        if (firstOfTwoSetsAndPilot) {
+          msg =
+            "Gratulerer! Du kan ca. x ord på fransk. Ta en ny test for å bekrefte resultatet ditt.";
+        } else {
+          this.isFullStopOfTest = true;
+          msg = "Gratulerer! Du kan ca. x ord på fransk.";
+        }
+      }
+      //CASE 3: If NOT passed the test, with negative score
+      else {
+        //If pilot, always force a possible second set, even when low score
+        if (firstOfTwoSetsAndPilot) {
+          msg =
+            "Beklager! Vi kunne ikke estimere din vokabularstørrelse. Ta en ny test for å prøve igjen.";
+        } else {
+          this.isFullStopOfTest = true;
+          msg = "Beklager! Vi kunne ikke estimere din vokabularstørrelse.";
+        }
+      }
+
+      this.feedbackMessage = msg;
+
+      //If there are no more bands/sets
+      if (
+        !firstOfTwoSetsAndPilot &&
+        this.currentBandIndex == this.bands.length
+      ) {
+        this.isFullStopOfTest = true;
+      }
+
+      //Last calcs
+      if (this.isFullStopOfTest == false) {
+        this.currentWordIndex = 0;
+
+        //Iterate to next set/band
+        if (firstOfTwoSetsAndPilot) {
+          this.currentSetIndex += 1;
+        } else {
+          this.currentBandIndex += 1;
+          if (this.$store.state.grade == "grade9") {
+            this.currentSetIndex = 0;
+          }
+          if (this.$store.state.grade == "grade10") {
+            this.currentSetIndex = 2;
+          }
+        }
+        //Prepare for next set/band
+        this.generateSequence(); //generates this.currentUserAllDataMap
+        this.setNextWord();
+      }
     },
     /*
      *METHOD START:
@@ -153,7 +391,17 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.generateSequence;
+    if (this.$store.state.grade == "grade9") {
+      this.currentSetIndex = 0;
+    }
+    if (this.$store.state.grade == "grade10") {
+      this.currentSetIndex = 2;
+    }
+    this.currentBandIndex = 0;
+    this.currentWordIndex = 0;
+
+    this.generateSequence(); //generates this.currentUserAllDataMap
+    this.setNextWord();
   }
 });
 </script>
