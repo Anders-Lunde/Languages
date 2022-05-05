@@ -68,7 +68,15 @@
               <br />
               PercentageForThisSet: {{ PercentageForThisSet }}
               <br />
+              atLeastOneSetInCurrentBandAboveCutoff:
+              <b
+                ><u>{{ atLeastOneSetInCurrentBandAboveCutoff }}</u>
+              </b>
+              <br />
+              <br />
               currentWord: {{ currentWord }}
+              <br />
+              isRealCurrentWordReal?: {{ isRealMethod() }}
               <br />
               currentWordIndex:<b
                 ><u> {{ currentWordIndex }}</u>
@@ -78,11 +86,10 @@
               <br />
               currentSetIndex: {{ currentSetIndex }}
               <br />
+              <br />
               isFullStopOfTest: {{ isFullStopOfTest }}
               <br />
-              <br />
-              isRealCurrentWordReal?: {{ isRealMethod() }}
-              <br />
+              isSetDone: {{ isSetDone }}
               <br />
               firstOfTwoSetsAndPilot: {{ firstOfTwoSetsAndPilot }}
               <br />
@@ -216,7 +223,7 @@ export default Vue.extend({
   props: {},
   data() {
     return {
-      debug: true,
+      debug: false,
       currentWord: "placeholder",
       currentWordIndex: 0,
       currentBandIndex: 0, //Always start with bottom band
@@ -233,7 +240,7 @@ export default Vue.extend({
       totalVocabulary: 0,
       averageVocabularySizeForCurrentBand: 0,
       commentsFromUser: "",
-      //For debug:
+      atLeastOneSetInCurrentBandAboveCutoff: false,
       vocabularySizeForThisSet: 0,
       PercentageForThisSet: 0,
       totalScoreForThisSet: 0
@@ -428,6 +435,20 @@ export default Vue.extend({
         this.currentWordIndex
       ].userAnswer = response;
 
+      //todo debug
+      //1
+      const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
+        "array"
+      ][this.currentWordIndex].isReal;
+      console.log("correctAnswer", correctAnswer);
+      //2
+      this.currentUserAllDataMap[currentBand][currentSet]["array"][
+        this.currentWordIndex
+      ].userAnswer = correctAnswer;
+      //3
+      response = correctAnswer;
+      //debug
+
       //Record score
       const isRealWord = this.currentUserAllDataMap[currentBand][currentSet][
         "array"
@@ -515,6 +536,21 @@ export default Vue.extend({
         [0, 2].includes(this.currentSetIndex) && isPilot;
       this.firstOfTwoSetsAndPilot = firstOfTwoSetsAndPilot;
 
+      //Figure out value of this.atLeastOneSetInCurrentBandAboveCutoff
+      this.atLeastOneSetInCurrentBandAboveCutoff = false;
+      for (const setName in this.currentUserAllDataMap[currentBand]) {
+        if (!this.sets.includes(setName)) {
+          continue;
+        }
+        if (
+          this.currentUserAllDataMap[currentBand][setName][
+            "PercentageForThisSet"
+          ] >= CUTOFF
+        ) {
+          this.atLeastOneSetInCurrentBandAboveCutoff = true;
+        }
+      }
+
       let msg = "";
 
       //Todo
@@ -525,7 +561,10 @@ export default Vue.extend({
       //           }
 
       //CASE 1: If passed the test
-      if (PercentageForThisSet >= CUTOFF) {
+      if (
+        PercentageForThisSet >= CUTOFF ||
+        this.atLeastOneSetInCurrentBandAboveCutoff
+      ) {
         //If this is pilot, and the first of two sets to be forced to take
         if (firstOfTwoSetsAndPilot) {
           this.isFullStopOfTest = false;
@@ -568,14 +607,14 @@ export default Vue.extend({
       //If there are no more bands/sets
       if (
         !firstOfTwoSetsAndPilot &&
-        this.currentBandIndex + 1 == this.bands.length
+        this.currentBandIndex + 1 == this.bands.length &&
+        this.isSetDone
       ) {
         console.log("Full stop set in place = 825");
         this.isFullStopOfTest = true;
       }
-
       //If not done with current set, goto next word
-      else if (!this.isSetDone) {
+      if (!this.isSetDone) {
         //Iterate
         this.currentWordIndex += 1;
         this.setNextWord();
@@ -624,6 +663,11 @@ export default Vue.extend({
      *METHOD START:
      */
     onTestFinished() {
+      this.showUserfeedback = true;
+      this.feedbackMessage = this.feedbackMessage.replace(
+        "Ta neste test for å utforske nivået ditt.",
+        ""
+      );
       this.feedbackMessage =
         "Sluttresultat: <br>" +
         this.feedbackMessage +
@@ -670,6 +714,11 @@ export default Vue.extend({
     }
   },
   mounted() {
+    if (this.$route.query.debug == 1) {
+      console.log("Debug mode detected");
+      this.debug = true;
+    }
+
     if (this.$store.state.grade == "grade9") {
       this.currentSetIndex = 0;
     }
