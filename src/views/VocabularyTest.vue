@@ -21,21 +21,23 @@
             </v-card-text>
 
             <v-card-text v-if="debug">
-              msg: {{ feedbackMessage }}
+              current msg: {{ feedbackMessage }}
               <br />
-              vocabularySize: {{ vocabularySize }}
+              vocabularySizeForThisSet: {{ vocabularySizeForThisSet }}
               <br />
               <br />
               totalVocabulary: {{ totalVocabulary }}
               <br />
               <br />
-              totalScore: {{ totalScore }}
+              totalScoreForThisSet: {{ totalScoreForThisSet }}
               <br />
               PercentageForThisSet: {{ PercentageForThisSet }}
               <br />
               currentWord: {{ currentWord }}
               <br />
-              currentWordIndex: {{ currentWordIndex }}
+              currentWordIndex:<b
+                ><u> {{ currentWordIndex }}</u>
+              </b>
               <br />
               currentBandIndex: {{ currentBandIndex }}
               <br />
@@ -44,10 +46,31 @@
               isFullStopOfTest: {{ isFullStopOfTest }}
               <br />
               <br />
-              isRealMethod: {{ isRealMethod() }}
+              isRealCurrentWordReal?: {{ isRealMethod() }}
               <br />
               <br />
               firstOfTwoSetsAndPilot: {{ firstOfTwoSetsAndPilot }}
+              <br />
+              <br />
+
+              <v-btn
+                v-if="!isSetDone"
+                large
+                @click="debugForceCorrectUserAnswer()"
+                outlined
+                text
+              >
+                Avgi rett svar
+              </v-btn>
+              <v-btn
+                v-if="!isSetDone"
+                large
+                @click="debugForceInCorrectUserAnswer()"
+                outlined
+                text
+              >
+                Avgi feil svar
+              </v-btn>
             </v-card-text>
             <v-card-actions class="mt-10">
               <v-spacer></v-spacer>
@@ -153,9 +176,9 @@ export default Vue.extend({
       firstOfTwoSetsAndPilot: false,
       totalVocabulary: 0,
       //For debug:
-      vocabularySize: 0,
+      vocabularySizeForThisSet: 0,
       PercentageForThisSet: 0,
-      totalScore: 0
+      totalScoreForThisSet: 0
     };
   },
 
@@ -193,7 +216,7 @@ export default Vue.extend({
             continue;
           }
           innerSum += this.currentUserAllDataMap[bandName][setName][
-            "vocabularySize"
+            "vocabularySizeForThisSet"
           ];
           innerLength += 1;
         }
@@ -236,8 +259,8 @@ export default Vue.extend({
         totalVocabulary: 0,
         c1c5: {
           set1: {
-            vocabularySize: 0,
-            totalScore: 0,
+            vocabularySizeForThisSet: 0,
+            totalScoreForThisSet: 0,
             PercentageForThisSet: 0,
             array: [
             {
@@ -288,26 +311,50 @@ export default Vue.extend({
 
       /*
       ADD TO MAP:
-      vocabularySize: 0,
-      totalScore: 0,
+      vocabularySizeForThisSet: 0,
+      totalScoreForThisSet: 0,
       PercentageForThisSet: 0,
       */
-      this.currentUserAllDataMap[currentBand][currentSet]["vocabularySize"] = 0;
-      this.currentUserAllDataMap[currentBand][currentSet]["totalScore"] = 0;
+      this.currentUserAllDataMap[currentBand][currentSet][
+        "vocabularySizeForThisSet"
+      ] = 0;
+      this.currentUserAllDataMap[currentBand][currentSet][
+        "totalScoreForThisSet"
+      ] = 0;
       this.currentUserAllDataMap[currentBand][currentSet][
         "PercentageForThisSet"
       ] = 0;
-
-      console.log("Generate data success!");
-      console.log("AAAAAAA", this.currentUserAllDataMap);
+      console.log("Generate sequence success!");
     },
-
+    /*
+     *METHOD START:
+     */
+    debugForceCorrectUserAnswer: function() {
+      const currentBand = this.bands[this.currentBandIndex];
+      const currentSet = this.sets[this.currentSetIndex];
+      const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
+        "array"
+      ][this.currentWordIndex].isReal;
+      this.onResponse(correctAnswer);
+    },
+    /*
+     *METHOD START:
+     */
+    debugForceInCorrectUserAnswer: function() {
+      const currentBand = this.bands[this.currentBandIndex];
+      const currentSet = this.sets[this.currentSetIndex];
+      const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
+        "array"
+      ][this.currentWordIndex].isReal;
+      this.onResponse(!correctAnswer);
+    },
     /*
      *METHOD START:
      */
     onResponse: function(response) {
       const currentBand = this.bands[this.currentBandIndex];
       const currentSet = this.sets[this.currentSetIndex];
+
       //Record response
       this.currentUserAllDataMap[currentBand][currentSet]["array"][
         this.currentWordIndex
@@ -331,58 +378,70 @@ export default Vue.extend({
         currentSet
       ]["array"];
 
-      if (this.currentWordIndex >= currentUserWordArray.length - 2) {
+      if (this.currentWordIndex >= currentUserWordArray.length - 1) {
         this.isSetDone = true;
       }
 
-      //Else, if set is done:
       //Calc total score
-      let totalScore = 0;
+      let totalScoreForThisSet = 0;
 
       for (const e of currentUserWordArray) {
-        totalScore += e.score;
+        totalScoreForThisSet += e.score;
       }
-      //update component this.totalScore
-      this.totalScore = totalScore;
+      //update component this.totalScoreForThisSet
+      this.totalScoreForThisSet = totalScoreForThisSet;
       //Calc vocabulary size
       const MaxScore = 20;
-      const PercentageForThisSet = Math.round((totalScore / MaxScore) * 100);
+      let PercentageForThisSet = Math.round(
+        (totalScoreForThisSet / MaxScore) * 100
+      );
+      PercentageForThisSet = Math.max(0, PercentageForThisSet);
       //update component this.PercentageForThisSet
       this.PercentageForThisSet = PercentageForThisSet;
 
-      let vocabularySize = 0;
+      let vocabularySizeForThisSet = 0;
       if (this.currentBandIndex == 0) {
-        vocabularySize = Math.round(500 * (PercentageForThisSet / 100));
+        vocabularySizeForThisSet = Math.round(
+          500 * (PercentageForThisSet / 100)
+        );
       } else if (this.currentBandIndex == 1) {
-        vocabularySize = Math.round(1000 * (PercentageForThisSet / 100));
+        vocabularySizeForThisSet = Math.round(
+          500 * (PercentageForThisSet / 100)
+        );
       } else if (this.currentBandIndex == 2) {
-        vocabularySize = Math.round(1500 * (PercentageForThisSet / 100));
+        vocabularySizeForThisSet = Math.round(
+          500 * (PercentageForThisSet / 100)
+        );
       } else if (this.currentBandIndex == 3) {
-        vocabularySize = Math.round(2000 * (PercentageForThisSet / 100));
+        vocabularySizeForThisSet = Math.round(
+          500 * (PercentageForThisSet / 100)
+        );
       } else if (this.currentBandIndex == 4) {
-        vocabularySize = Math.round(3000 * (PercentageForThisSet / 100));
+        vocabularySizeForThisSet = Math.round(
+          1000 * (PercentageForThisSet / 100)
+        );
       } else {
         alert("ERROR: SOMETHING WENT WRONG WITH CALCULATING VOCABULARY SIZE");
-        vocabularySize =
+        vocabularySizeForThisSet =
           "ERROR: SOMETHING WENT WRONG WITH CALCULATING VOCABULARY SIZE";
       }
 
-      this.vocabularySize = vocabularySize;
+      this.vocabularySizeForThisSet = vocabularySizeForThisSet;
 
       //Set map values
       this.currentUserAllDataMap[currentBand][currentSet][
-        "vocabularySize"
-      ] = vocabularySize;
+        "vocabularySizeForThisSet"
+      ] = vocabularySizeForThisSet;
       this.currentUserAllDataMap[currentBand][currentSet][
-        "totalScore"
-      ] = totalScore;
+        "totalScoreForThisSet"
+      ] = totalScoreForThisSet;
       this.currentUserAllDataMap[currentBand][currentSet][
         "PercentageForThisSet"
       ] = PercentageForThisSet;
 
       this.totalVocabularyMethodCalcAndSet();
 
-      const CUTOFF = 1; //todo: 70
+      const CUTOFF = 70;
       const isPilot = this.$store.state.isPilot;
       const firstOfTwoSetsAndPilot =
         [0, 2].includes(this.currentSetIndex) && isPilot;
@@ -390,11 +449,7 @@ export default Vue.extend({
 
       let msg = "";
 
-      //       s1:
-      //   "Gratulerer! Du kan ca. x ord på fransk. Ta en ny test for å bekrefte resultatet ditt.",
-      // s2:
-      //   "Gratulerer! Du kan ca. x ord på fransk. Ta neste test for å utforske nivået ditt.",
-
+      //Todo
       // if (this.dispLang == "no") {
       //             message = "";
       //           } else {
@@ -405,32 +460,37 @@ export default Vue.extend({
       if (PercentageForThisSet >= CUTOFF) {
         //If this is pilot, and the first of two sets to be forced to take
         if (firstOfTwoSetsAndPilot) {
+          this.isFullStopOfTest = false;
           msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
         } else {
+          this.isFullStopOfTest = false;
           msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk. Ta neste test for å utforske nivået ditt.`;
         }
       }
       //CASE 2: If NOT passed the test, but with positive score
-      else if (PercentageForThisSet > 0) {
+      //If this.currentBandIndex > 0 , always display a vocab score even if PercentageForThisSet < 0,
+      //since we want to show the extrapolated value from previous bands
+      else if (PercentageForThisSet > 0 || this.currentBandIndex > 0) {
         //If pilot, always force a possible second set, even when low score
         if (firstOfTwoSetsAndPilot) {
+          this.isFullStopOfTest = false;
           msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
         } else {
           this.isFullStopOfTest = true;
           console.log("Full stop set in place = 111");
-
           msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk.`;
         }
       }
       //CASE 3: If NOT passed the test, with negative score
+      //This is only triggered for the case where this.currentBandIndex == 0 (due to previous conditional)
       else {
         //If pilot, always force a possible second set, even when low score
         if (firstOfTwoSetsAndPilot) {
+          this.isFullStopOfTest = false;
           msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse. Ta en ny test for å prøve igjen.`;
         } else {
           this.isFullStopOfTest = true;
           console.log("Full stop set in place = 222");
-
           msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse.`;
         }
       }
@@ -446,11 +506,10 @@ export default Vue.extend({
         this.isFullStopOfTest = true;
       }
 
-      //Iterate
-      this.currentWordIndex += 1;
-
       //If not done with current set, goto next word
       if (!this.isSetDone) {
+        //Iterate
+        this.currentWordIndex += 1;
         this.setNextWord();
         return; //RETURN
       } else {
