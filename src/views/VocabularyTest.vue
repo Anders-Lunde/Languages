@@ -4,6 +4,7 @@
       <v-row class="" justify="center">
         <v-col cols="12" md="6">
           <v-card>
+            <!--Current word / Title -->
             <v-card-title>
               <v-chip v-if="isRealMethod() && debug">REAL</v-chip>
               <span
@@ -12,19 +13,53 @@
                 >{{ capitalize(currentWord) }}</span
               >
             </v-card-title>
+
+            <!-- User feedback between sets -->
             <v-card-text v-if="showUserfeedback">
               <span
                 text-color="black"
                 class="text-h5 mx-auto black--text font-weight-medium"
-                >{{ feedbackMessage }}</span
-              >
+                v-html="feedbackMessage"
+              ></span>
             </v-card-text>
+
+            <!-- Very last messages (final result + feedback input field) -->
+            <v-card-text v-if="isSetDone && isFullStopOfTest">
+              <span
+                text-color="black"
+                class="text-h6 mx-auto  font-weight-medium"
+                >Hva syns du om testen (valgfritt)?
+              </span>
+
+              <v-text-field
+                v-model="commentsFromUser"
+                label="Skriv her"
+              ></v-text-field>
+              <br />
+              <!-- :disabled="commentsFromUser.length == 0" -->
+              <v-btn
+                v-if="commentsFromUser.length == 0"
+                @click="onClickFinishTest()"
+                color="primary"
+              >
+                Avslutt
+              </v-btn>
+              <v-btn v-else @click="onClickFinishTest()" color="primary">
+                Send inn og avslutt
+              </v-btn>
+            </v-card-text>
+
+            <!-- Debug things -->
 
             <v-card-text v-if="debug">
               current msg: {{ feedbackMessage }}
               <br />
+              <br />
+
               vocabularySizeForThisSet: {{ vocabularySizeForThisSet }}
               <br />
+              averageVocabularySizeForCurrentBand:
+              {{ averageVocabularySizeForCurrentBand }}
               <br />
               totalVocabulary: {{ totalVocabulary }}
               <br />
@@ -56,7 +91,7 @@
               <v-btn
                 v-if="!isSetDone"
                 large
-                @click="debugForceCorrectUserAnswer()"
+                @click="debugForceCorrectUserAnswer(1)"
                 outlined
                 text
               >
@@ -65,27 +100,49 @@
               <v-btn
                 v-if="!isSetDone"
                 large
-                @click="debugForceInCorrectUserAnswer()"
+                @click="debugForceInCorrectUserAnswer(1)"
                 outlined
                 text
               >
                 Avgi feil svar
               </v-btn>
+              <br />
+              <br />
+
+              <v-btn
+                v-if="!isSetDone"
+                large
+                @click="debugForceCorrectUserAnswer(15)"
+                outlined
+                text
+              >
+                Avgi 15 rett svar
+              </v-btn>
+              <v-btn
+                v-if="!isSetDone"
+                large
+                @click="debugForceInCorrectUserAnswer(15)"
+                outlined
+                text
+              >
+                Avgi 15 feil svar
+              </v-btn>
             </v-card-text>
+
+            <!-- No, Yes, and OK buttons -->
             <v-card-actions class="mt-10">
               <v-spacer></v-spacer>
               <!-- OK button between sets -->
-
               <v-btn
-                v-if="isSetDone"
+                v-if="isSetDone && isFullStopOfTest == false"
                 large
                 @click="setDoneOkBtn()"
                 color="primary"
               >
                 {{ btnSetDoneOk }}
               </v-btn>
-              <!-- No button -->
 
+              <!-- No button -->
               <v-btn
                 v-if="!isSetDone"
                 large
@@ -96,10 +153,9 @@
                 {{ btnNo }}
               </v-btn>
               <v-spacer v-if="!isSetDone"></v-spacer
-              ><v-spacer v-if="!isSetDone"></v-spacer
               ><v-spacer v-if="!isSetDone"></v-spacer>
-              <!-- Yes button -->
 
+              <!-- Yes button -->
               <v-btn
                 v-if="!isSetDone"
                 large
@@ -175,6 +231,8 @@ export default Vue.extend({
       words: this.$store.state.words,
       firstOfTwoSetsAndPilot: false,
       totalVocabulary: 0,
+      averageVocabularySizeForCurrentBand: 0,
+      commentsFromUser: "",
       //For debug:
       vocabularySizeForThisSet: 0,
       PercentageForThisSet: 0,
@@ -201,10 +259,11 @@ export default Vue.extend({
     /*
      *METHOD START:
      */
+    //If pilot, we use the average value of each band (2 sets each band)
     totalVocabularyMethodCalcAndSet() {
       // const currentBand = this.bands[this.currentBandIndex];
       // if (this.currentUserAllDataMap[currentBand]) {
-      let sum = 0;
+      let totalVocabulary = 0;
       for (const bandName in this.currentUserAllDataMap) {
         if (!this.bands.includes(bandName)) {
           continue;
@@ -221,10 +280,12 @@ export default Vue.extend({
           innerLength += 1;
         }
         const averageVocabularySizeForBand = Math.round(innerSum / innerLength);
-        sum += averageVocabularySizeForBand;
+        totalVocabulary += averageVocabularySizeForBand;
+        //Set global which will after all loops be only the most recent band (current)
+        this.averageVocabularySizeForCurrentBand = averageVocabularySizeForBand;
       }
-      this.currentUserAllDataMap["totalVocabulary"] = sum;
-      this.totalVocabulary = sum;
+      this.currentUserAllDataMap["totalVocabulary"] = totalVocabulary;
+      this.totalVocabulary = totalVocabulary;
       // } else {
       //   return -1;
       // }
@@ -329,28 +390,35 @@ export default Vue.extend({
     /*
      *METHOD START:
      */
-    debugForceCorrectUserAnswer: function() {
-      const currentBand = this.bands[this.currentBandIndex];
-      const currentSet = this.sets[this.currentSetIndex];
-      const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
-        "array"
-      ][this.currentWordIndex].isReal;
-      this.onResponse(correctAnswer);
+    debugForceCorrectUserAnswer: function(loops) {
+      for (let i = 0; i < loops; i++) {
+        const currentBand = this.bands[this.currentBandIndex];
+        const currentSet = this.sets[this.currentSetIndex];
+        const correctAnswer = this.currentUserAllDataMap[currentBand][
+          currentSet
+        ]["array"][this.currentWordIndex].isReal;
+        this.onResponse(correctAnswer);
+      }
     },
     /*
      *METHOD START:
      */
-    debugForceInCorrectUserAnswer: function() {
-      const currentBand = this.bands[this.currentBandIndex];
-      const currentSet = this.sets[this.currentSetIndex];
-      const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
-        "array"
-      ][this.currentWordIndex].isReal;
-      this.onResponse(!correctAnswer);
+    debugForceInCorrectUserAnswer: function(loops) {
+      for (let i = 0; i < loops; i++) {
+        const currentBand = this.bands[this.currentBandIndex];
+        const currentSet = this.sets[this.currentSetIndex];
+        const correctAnswer = this.currentUserAllDataMap[currentBand][
+          currentSet
+        ]["array"][this.currentWordIndex].isReal;
+        this.onResponse(!correctAnswer);
+      }
     },
     /*
      *METHOD START:
      */
+    //Calculating all variables on each response, for debugging purposes
+    //(so they can be displayed in debug view after each response)
+    //However, stricktly speaking only after end of test would be neccessary.
     onResponse: function(response) {
       const currentBand = this.bands[this.currentBandIndex];
       const currentSet = this.sets[this.currentSetIndex];
@@ -500,20 +568,24 @@ export default Vue.extend({
       //If there are no more bands/sets
       if (
         !firstOfTwoSetsAndPilot &&
-        this.currentBandIndex == this.bands.length
+        this.currentBandIndex + 1 == this.bands.length
       ) {
         console.log("Full stop set in place = 825");
         this.isFullStopOfTest = true;
       }
 
       //If not done with current set, goto next word
-      if (!this.isSetDone) {
+      else if (!this.isSetDone) {
         //Iterate
         this.currentWordIndex += 1;
         this.setNextWord();
         return; //RETURN
       } else {
         this.showUserfeedback = true;
+
+        if (this.isFullStopOfTest) {
+          this.onTestFinished();
+        }
       }
     },
     /*
@@ -544,9 +616,26 @@ export default Vue.extend({
         this.generateSequence(); //generates this.currentUserAllDataMap
         this.setNextWord();
       } else {
-        console.log("TODO");
-        alert("Full stop of test = true");
+        this.onTestFinished();
       }
+    },
+
+    /*
+     *METHOD START:
+     */
+    onTestFinished() {
+      this.feedbackMessage =
+        "Sluttresultat: <br>" +
+        this.feedbackMessage +
+        "<br><br>Hvis du vil ta vare på resultatet ditt, kan du ta et skjermbilde av denne siden.";
+      //Save  to vuex
+      this.$store.state.currentUserAllDataMap = this.currentUserAllDataMap;
+    },
+
+    onClickFinishTest() {
+      //Save  to vuex
+      this.$store.state.commentsFromUser = this.commentsFromUser;
+      this.$router.push("exit-screen");
     },
 
     /*

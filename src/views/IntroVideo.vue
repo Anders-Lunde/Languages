@@ -79,7 +79,7 @@ export default Vue.extend({
       console.log("asd");
     }
   },
-  mouned() {
+  mounted() {
     //Important! Neccesary to update source of videos on screen change (ii change).
     //Loading videos also ensures smooth experience on button clicks.
     const video = this.$refs.introductionVideo;
