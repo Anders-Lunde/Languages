@@ -6,10 +6,11 @@
           <v-card>
             <!--Current word / Title -->
             <v-card-title>
-              <v-chip v-if="isRealMethod()">REAL</v-chip>
               <span
                 v-if="!showUserfeedback"
                 class="text-h2  mx-auto font-weight-light"
+              >
+                <v-chip v-if="isRealMethod()">REAL</v-chip
                 >{{ capitalize(currentWord) }}</span
               >
             </v-card-title>
