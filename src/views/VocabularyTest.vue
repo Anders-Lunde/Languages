@@ -6,7 +6,7 @@
           <v-card>
             <!--Current word / Title -->
             <v-card-title>
-              <v-chip v-if="isRealMethod() && debug">REAL</v-chip>
+              <v-chip v-if="isRealMethod()">REAL</v-chip>
               <span
                 v-if="!showUserfeedback"
                 class="text-h2  mx-auto font-weight-light"
@@ -435,19 +435,19 @@ export default Vue.extend({
         this.currentWordIndex
       ].userAnswer = response;
 
-      //todo debug
-      //1
-      const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
-        "array"
-      ][this.currentWordIndex].isReal;
-      console.log("correctAnswer", correctAnswer);
-      //2
-      this.currentUserAllDataMap[currentBand][currentSet]["array"][
-        this.currentWordIndex
-      ].userAnswer = correctAnswer;
-      //3
-      response = correctAnswer;
-      //debug
+      // //todo debug
+      // //1
+      // const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
+      //   "array"
+      // ][this.currentWordIndex].isReal;
+      // console.log("correctAnswer", correctAnswer);
+      // //2
+      // this.currentUserAllDataMap[currentBand][currentSet]["array"][
+      //   this.currentWordIndex
+      // ].userAnswer = correctAnswer;
+      // //3
+      // response = correctAnswer;
+      // //debug
 
       //Record score
       const isRealWord = this.currentUserAllDataMap[currentBand][currentSet][
