@@ -5,6 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    createdTS: null,
+    createdTSreadable: null,
     commentsFromUser: "",
     currentUserAllDataMap: {}, //all data from test
     isPilot: true,

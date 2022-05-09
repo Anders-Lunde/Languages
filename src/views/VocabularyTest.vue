@@ -14,6 +14,14 @@
               >
             </v-card-title>
 
+            <v-card-text v-if="showProgressCircularTSDupload">
+              Sending data - please wait...
+              <v-progress-circular
+                color="light-green"
+                indeterminate
+              ></v-progress-circular>
+            </v-card-text>
+
             <!-- User feedback between sets -->
             <v-card-text v-if="showUserfeedback">
               <span
@@ -187,9 +195,7 @@ import Vue from "vue";
 
 export default Vue.extend({
   name: "VocabularyTest",
-  components: {
-    //dummy
-  },
+  components: {},
   computed: {
     /*
     STRINGS:
@@ -224,6 +230,7 @@ export default Vue.extend({
   data() {
     return {
       debug: false,
+      showProgressCircularTSDupload: false,
       currentWord: "placeholder",
       currentWordIndex: 0,
       currentBandIndex: 0, //Always start with bottom band
@@ -568,10 +575,10 @@ export default Vue.extend({
         //If this is pilot, and the first of two sets to be forced to take
         if (firstOfTwoSetsAndPilot) {
           this.isFullStopOfTest = false;
-          msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
+          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
         } else {
           this.isFullStopOfTest = false;
-          msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk. Ta neste test for å utforske nivået ditt.`;
+          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test på neste nivå for å utforske nivået ditt.`;
         }
       }
       //CASE 2: If NOT passed the test, but with positive score
@@ -581,11 +588,11 @@ export default Vue.extend({
         //If pilot, always force a possible second set, even when low score
         if (firstOfTwoSetsAndPilot) {
           this.isFullStopOfTest = false;
-          msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
+          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
         } else {
           this.isFullStopOfTest = true;
           console.log("Full stop set in place = 111");
-          msg = `Gratulerer! Du kan ca. ${this.totalVocabulary} ord på fransk.`;
+          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk.`;
         }
       }
       //CASE 3: If NOT passed the test, with negative score
@@ -668,6 +675,7 @@ export default Vue.extend({
         "Ta neste test for å utforske nivået ditt.",
         ""
       );
+      this.feedbackMessage = this.feedbackMessage.replace(" minst ", " ca. ");
       this.feedbackMessage =
         "Sluttresultat: <br>" +
         this.feedbackMessage +
@@ -676,10 +684,95 @@ export default Vue.extend({
       this.$store.state.currentUserAllDataMap = this.currentUserAllDataMap;
     },
 
-    onClickFinishTest() {
+    async onClickFinishTest() {
       //Save  to vuex
       this.$store.state.commentsFromUser = this.commentsFromUser;
-      this.$router.push("exit-screen");
+      //Remove data-set from Vuex before submitting data (words)
+      Vue.delete(this.$store.state, "words");
+      //Send to server
+      await this.sendTestDataToServer();
+      //Goto exit page
+      if (this.debug) {
+        this.$router.push("data-presentation");
+      } else {
+        this.$router.push("exit-screen");
+      }
+    },
+
+    /*
+     *METHOD START
+     */
+    async sendTestDataToServer() {
+      /*
+      stringify
+      ->
+      send this with formdata to server
+      */
+      console.log("Starting sendTestDataToServer");
+      this.showProgressCircularTSDupload = true;
+
+      const stringifiedData = JSON.stringify(this.$store.state);
+      const filename =
+        this.$store.state.createdTS +
+        "_" +
+        this.$store.state.fullname +
+        "_" +
+        this.$store.state.isPilot +
+        "_" +
+        this.$store.state.grade +
+        "_" +
+        this.$store.state.country +
+        "_" +
+        ".json";
+
+      //Create a file from the string data
+      const file = new File([stringifiedData], filename);
+
+      //Send the file to server.
+      const form = new FormData();
+      form.append("stringifiedData", file);
+
+      //const url = "http://localhost:3022/transmit-data"; //for debug
+      const url = "https://app.languages.no/api/transmit-data";
+
+      console.log("Sending data to server...");
+      // eslint-disable-next-line
+      const vm = this;
+      await fetch(url, {
+        method: "POST",
+        headers: {
+          filename: filename
+          // metadata: JSON.stringify(testConfig.metadata),
+          // vlfkey: testConfig.vlfKey
+        },
+        body: form
+      })
+        .then(function(response) {
+          if (response.ok) {
+            return response;
+          }
+          return Promise.reject(response);
+        })
+        .then(function() {
+          vm.showProgressCircularTSDupload = false;
+          alert("Data successfully transmitted :)");
+        })
+        .catch(function(error) {
+          try {
+            error.json().then(data => {
+              console.error("Something went wrong.", data.msg);
+              alert(
+                "Data NOT successfully transmitted :( Please report this error to your teacher. Error message: " +
+                  data.msg
+              );
+            });
+          } catch (e) {
+            console.error("Error (Server er kanskje ute av drift)", e);
+            alert(
+              "Data NOT successfully transmitted :( Please report this error to your teacher. (fetch error: Server might be down, or no internet connection.)"
+            );
+          }
+        });
     },
 
     /*
@@ -714,7 +807,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    if (this.$route.query.debug == 1) {
+    if (this.$route.query.debug == "1") {
       console.log("Debug mode detected");
       this.debug = true;
     }
