@@ -1,8 +1,13 @@
 <template>
   <div>
     <h1 class="heading1">Data presentasjon</h1>
-    <v-btn @click="setTableData()"> Set table data</v-btn>
-    <v-btn @click="loadDataFromServer()"> Load data from server</v-btn>
+
+    <v-btn @click="populateTable()">
+      Load data from server, and display in table</v-btn
+    >
+    <br />
+    <v-btn @click="displayRaw()"> Load data from server, and display raw</v-btn>
+    <br />
 
     <!-- Table -->
     <v-data-table
@@ -90,23 +95,29 @@ export default Vue.extend({
 
   methods: {
     /*
-     *METHOD START:
+     * METHOD START:
      */
-    asd() {
-      console.log("asd");
+    displayRaw: async function() {
+      //TODO
+      console.log("todo");
     },
     /*
      * METHOD START:
      */
-    setTableData: function() {
-      this.tableData.push(this.$store.state);
+    populateTable: async function() {
+      const arrayOfjsons = await this.getArrayOfJSONsFromServer();
+      //Add to array testEntries
+      this.tableData = []; //Clear
+      for (const json of arrayOfjsons) {
+        this.tableData.push(json);
+      }
     },
     /*
      * METHOD START:
      */
-    loadDataFromServer: async function() {
+    getArrayOfJSONsFromServeR: async function() {
       //Get all jsons from server
-      let jsons = [];
+      let arrayOfjsons = [];
       try {
         const response = await fetch(
           //"http://localhost:3022/get-data",
@@ -116,17 +127,13 @@ export default Vue.extend({
           }
         );
         if (response.status == 200) {
-          jsons = await response.json();
+          arrayOfjsons = await response.json();
         }
       } catch (err) {
         console.log("Fetch Error: ", err);
         alert("[loadDataFromServer] Fetch Error: " + err);
       }
-      //Add to array testEntries
-      this.tableData = []; //Clear
-      for (const json of jsons) {
-        this.tableData.push(json);
-      }
+      return arrayOfjsons;
     }
   },
   mounted() {
