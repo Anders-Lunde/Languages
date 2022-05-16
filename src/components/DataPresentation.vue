@@ -2,6 +2,8 @@
   <div>
     <h1 class="heading1">Data presentasjon</h1>
     <v-btn @click="setTableData()"> Set table data</v-btn>
+    <v-btn @click="loadDataFromServer()"> Load data from server</v-btn>
+
     <!-- Table -->
     <v-data-table
       :headers="tableHeaders"
@@ -94,10 +96,34 @@ export default Vue.extend({
       console.log("asd");
     },
     /*
-         METHOD START:
+     * METHOD START:
      */
     setTableData: function() {
       this.tableData.push(this.$store.state);
+    },
+    /*
+     * METHOD START:
+     */
+    loadDataFromServer: async function() {
+      //Get all jsons from server
+      try {
+        const response = await fetch(
+          //"http://localhost:3022/get-data",
+          "https://app.languages.no/api/get-data",
+          {
+            method: "GET"
+          }
+        );
+        if (response.status == 200) {
+          console.log(response);
+        }
+      } catch (err) {
+        console.log("Fetch Error: ", err);
+        alert("[loadDataFromServer] Fetch Error: " + err);
+      }
+
+      //Add to array testEntries
+      //this.testEntries.push();
     }
   },
   mounted() {
