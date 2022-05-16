@@ -122,11 +122,10 @@ export default Vue.extend({
         console.log("Fetch Error: ", err);
         alert("[loadDataFromServer] Fetch Error: " + err);
       }
-      console.log("jsons", jsons);
-      console.log("JSON.parse(jsons)", JSON.parse(jsons));
       //Add to array testEntries
       for (const json of jsons) {
-        console.log("json: ", json);
+        this.testEntries.push(json);
+        this.testEntries.push(json);
         this.testEntries.push(json);
       }
     }
