@@ -106,7 +106,7 @@ export default Vue.extend({
      */
     loadDataFromServer: async function() {
       //Get all jsons from server
-      const jsons = [];
+      let jsons = [];
       try {
         const response = await fetch(
           //"http://localhost:3022/get-data",
@@ -116,13 +116,14 @@ export default Vue.extend({
           }
         );
         if (response.status == 200) {
-          jsons.push(response.json);
+          jsons = response.body;
         }
       } catch (err) {
         console.log("Fetch Error: ", err);
         alert("[loadDataFromServer] Fetch Error: " + err);
       }
-
+      console.log("jsons", jsons);
+      console.log("JSON.parse(jsons)", JSON.parse(jsons));
       //Add to array testEntries
       for (const json of jsons) {
         console.log("json: ", json);
