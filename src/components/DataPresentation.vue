@@ -124,6 +124,8 @@ export default Vue.extend({
       }
       //Add to array testEntries
       for (const json of jsons) {
+        console.log("json");
+        console.log(json);
         this.testEntries.push(json);
         this.testEntries.push(json);
         this.testEntries.push(json);
