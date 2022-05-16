@@ -6,7 +6,11 @@
       Load data from server, and display in table</v-btn
     >
     <br />
+    <br />
+    <br />
     <v-btn @click="displayRaw()"> Load data from server, and display raw</v-btn>
+    <br />
+    <br />
     <br />
 
     <!-- Table -->
@@ -115,7 +119,7 @@ export default Vue.extend({
     /*
      * METHOD START:
      */
-    getArrayOfJSONsFromServeR: async function() {
+    getArrayOfJSONsFromServer: async function() {
       //Get all jsons from server
       let arrayOfjsons = [];
       try {
