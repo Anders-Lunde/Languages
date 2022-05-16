@@ -116,7 +116,7 @@ export default Vue.extend({
           }
         );
         if (response.status == 200) {
-          jsons = response.json().data;
+          jsons = response.json();
         }
       } catch (err) {
         console.log("Fetch Error: ", err);
