@@ -22,7 +22,7 @@
       <template v-slot:top>
         <v-toolbar>
           <v-toolbar-title
-            >{{ testEntries.length }} lagrede tester under. Klikk på en rad for
+            >{{ tableData.length }} lagrede tester under. Klikk på en rad for
             alternativer.</v-toolbar-title
           >
           <v-spacer></v-spacer>
@@ -62,7 +62,7 @@ export default Vue.extend({
       debug: false,
       showAllTestsInAllMenues: false,
       // eslint-disable-next-line
-      testEntries: [],
+      //testEntries: [],
       // eslint-disable-next-line
       tableData: [],
       // eslint-disable-next-line
@@ -123,12 +123,9 @@ export default Vue.extend({
         alert("[loadDataFromServer] Fetch Error: " + err);
       }
       //Add to array testEntries
+      this.tableData = []; //Clear
       for (const json of jsons) {
-        console.log("json");
-        console.log(json);
-        this.testEntries.push(json);
-        this.testEntries.push(json);
-        this.testEntries.push(json);
+        this.tableData.push(json);
       }
     }
   },
