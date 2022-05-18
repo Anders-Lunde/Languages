@@ -6,7 +6,7 @@
           <v-card>
             <!--Current word / Title -->
             <v-card-title>
-              <v-chip v-if="isRealMethod()">REAL</v-chip>
+              <v-chip v-if="isRealMethod() && debug">REAL</v-chip>
               <span
                 v-if="!showUserfeedback"
                 class="text-h2  mx-auto font-weight-light"
