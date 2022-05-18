@@ -2,7 +2,7 @@
   <div style="height: 66%">
     <v-container fill-height fluid>
       <v-row class="" justify="center">
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="4" sm="7">
           <v-card>
             <!--Current word / Title -->
             <v-card-title>
