@@ -33,10 +33,12 @@
 
             <!-- Very last messages (final result + feedback input field) -->
             <v-card-text v-if="isSetDone && isFullStopOfTest">
+              <!-- Hva syns du om testen? -->
               <span
                 text-color="black"
                 class="text-h6 mx-auto  font-weight-medium"
-                >Hva syns du om testen (valgfritt)?
+              >
+                {{ txtWhatDidYouThinkAboutTest }}
               </span>
 
               <v-text-field
@@ -44,16 +46,25 @@
                 label="Skriv her"
               ></v-text-field>
               <br />
-              <!-- :disabled="commentsFromUser.length == 0" -->
-              <v-btn
-                v-if="commentsFromUser.length == 0"
-                @click="onClickFinishTest()"
-                color="primary"
+              <!-- Hvor mange ord på fransk tror du at du egentlig kan,? -->
+              <span
+                text-color="black"
+                class="text-h6 mx-auto  font-weight-medium"
               >
-                Avslutt
-              </v-btn>
-              <v-btn v-else @click="onClickFinishTest()" color="primary">
-                Send inn og avslutt
+                {{ txtHowManyWords }}
+              </span>
+
+              <v-radio-group v-model="selfEstimateFromUser">
+                <v-radio :label="selfEstimateFromUser1" value="1"></v-radio>
+                <v-radio :label="selfEstimateFromUser2" value="2"></v-radio>
+                <v-radio :label="selfEstimateFromUser3" value="3"></v-radio>
+                <v-radio :label="selfEstimateFromUser4" value="4"></v-radio>
+                <v-radio :label="selfEstimateFromUser5" value="5"></v-radio>
+              </v-radio-group>
+              <br />
+              <!-- :disabled="commentsFromUser.length == 0" -->
+              <v-btn @click="onClickFinishTest()" color="primary">
+                {{ txtSubmitAndFinish }}
               </v-btn>
             </v-card-text>
 
@@ -224,11 +235,69 @@ export default Vue.extend({
       } else {
         return "OK";
       }
+    },
+    selfEstimateFromUser1() {
+      if (this.dispLang == "no") {
+        return "mange flere";
+      } else {
+        return "many more";
+      }
+    },
+    selfEstimateFromUser2() {
+      if (this.dispLang == "no") {
+        return "noen flere ";
+      } else {
+        return "some more";
+      }
+    },
+    selfEstimateFromUser3() {
+      if (this.dispLang == "no") {
+        return "omtrent like mange";
+      } else {
+        return "a similar number";
+      }
+    },
+    selfEstimateFromUser4() {
+      if (this.dispLang == "no") {
+        return "noen færre ";
+      } else {
+        return "somewhat fewer";
+      }
+    },
+    selfEstimateFromUser5() {
+      if (this.dispLang == "no") {
+        return "langt færre";
+      } else {
+        return "far fewer";
+      }
+    },
+    txtHowManyWords() {
+      if (this.dispLang == "no") {
+        return "(Obligatorisk) Uavhengig av ditt resultat på denne testen, hvor mange ord på fransk tror du at du egentlig kan, sammenliknet med dine klassekamerater?";
+      } else {
+        return "(Mandatory) Regardless of how you performed on this test, how many French words do you believe you know compared with your classmates?";
+      }
+    },
+    txtWhatDidYouThinkAboutTest() {
+      if (this.dispLang == "no") {
+        return "(Valgfritt) Hva syns du om testen?";
+      } else {
+        return "(Optional) What did you think about this test?";
+      }
+    },
+
+    txtSubmitAndFinish() {
+      if (this.dispLang == "no") {
+        return "Send inn og avslutt";
+      } else {
+        return "Submit and finish";
+      }
     }
   },
   props: {},
   data() {
     return {
+      selfEstimateFromUser: null,
       debug: false,
       showProgressCircularTSDupload: false,
       currentWord: "placeholder",
@@ -559,14 +628,6 @@ export default Vue.extend({
       }
 
       let msg = "";
-
-      //Todo
-      // if (this.dispLang == "no") {
-      //             message = "";
-      //           } else {
-      //             message = "";
-      //           }
-
       //CASE 1: If passed the test
       if (
         PercentageForThisSet >= CUTOFF ||
@@ -575,10 +636,18 @@ export default Vue.extend({
         //If this is pilot, and the first of two sets to be forced to take
         if (firstOfTwoSetsAndPilot) {
           this.isFullStopOfTest = false;
-          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
+          if (this.dispLang == "no") {
+            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
+          } else {
+            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French. Take a new test to confirm your results.`;
+          }
         } else {
           this.isFullStopOfTest = false;
-          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test på neste nivå for å utforske nivået ditt.`;
+          if (this.dispLang == "no") {
+            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test på neste nivå for å utforske nivået ditt.`;
+          } else {
+            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French. Take a new test at the next level to explore your upper limit.`;
+          }
         }
       }
       //CASE 2: If NOT passed the test, but with positive score
@@ -588,11 +657,19 @@ export default Vue.extend({
         //If pilot, always force a possible second set, even when low score
         if (firstOfTwoSetsAndPilot) {
           this.isFullStopOfTest = false;
-          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
+          if (this.dispLang == "no") {
+            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
+          } else {
+            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French. Take a new test to confirm your results.`;
+          }
         } else {
           this.isFullStopOfTest = true;
           console.log("Full stop set in place = 111");
-          msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk.`;
+          if (this.dispLang == "no") {
+            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk.`;
+          } else {
+            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French.`;
+          }
         }
       }
       //CASE 3: If NOT passed the test, with negative score
@@ -601,11 +678,19 @@ export default Vue.extend({
         //If pilot, always force a possible second set, even when low score
         if (firstOfTwoSetsAndPilot) {
           this.isFullStopOfTest = false;
-          msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse. Ta en ny test for å prøve igjen.`;
+          if (this.dispLang == "no") {
+            msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse. Ta en ny test for å prøve igjen.`;
+          } else {
+            msg = `Sorry, we were unable to estimate your vocabulary size. Would you like to try again?.`;
+          }
         } else {
           this.isFullStopOfTest = true;
           console.log("Full stop set in place = 222");
-          msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse.`;
+          if (this.dispLang == "no") {
+            msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse.`;
+          } else {
+            msg = `Sorry, we were unable to estimate your vocabulary size.`;
+          }
         }
       }
 
@@ -672,14 +757,30 @@ export default Vue.extend({
     onTestFinished() {
       this.showUserfeedback = true;
       this.feedbackMessage = this.feedbackMessage.replace(
-        "Ta neste test for å utforske nivået ditt.",
+        "Ta en ny test på neste nivå for å utforske nivået ditt.",
+        ""
+      );
+      this.feedbackMessage = this.feedbackMessage.replace(
+        "Take a new test at the next level to explore your upper limit.",
         ""
       );
       this.feedbackMessage = this.feedbackMessage.replace(" minst ", " ca. ");
-      this.feedbackMessage =
-        "Sluttresultat: <br>" +
-        this.feedbackMessage +
-        "<br><br>Hvis du vil ta vare på resultatet ditt, kan du ta et skjermbilde av denne siden.";
+      this.feedbackMessage = this.feedbackMessage.replace(
+        " at least ",
+        " ca. "
+      );
+      if (this.dispLang == "no") {
+        this.feedbackMessage =
+          "Sluttresultat: <br>" +
+          this.feedbackMessage +
+          "<br><br>Hvis du vil ta vare på resultatet ditt, kan du ta et skjermbilde av denne siden.";
+      } else {
+        this.feedbackMessage =
+          "Final result: <br>" +
+          this.feedbackMessage +
+          "<br><br>If you wish to save your result, you may take a screen shot of this page.";
+      }
+
       //Save  to vuex
       this.$store.state.currentUserAllDataMap = this.currentUserAllDataMap;
     },
@@ -687,6 +788,8 @@ export default Vue.extend({
     async onClickFinishTest() {
       //Save  to vuex
       this.$store.state.commentsFromUser = this.commentsFromUser;
+      this.$store.state.totalVocabulary = this.totalVocabulary; //I want this value also in the outer map (resulting in it being in two places then)
+      this.$store.state.selfEstimateFromUser = this.selfEstimateFromUser;
       //Remove data-set from Vuex before submitting data (words)
       Vue.delete(this.$store.state, "words");
       //Send to server

@@ -8,7 +8,6 @@ export default new Vuex.Store({
     createdTS: null,
     createdTSreadable: null,
     commentsFromUser: "",
-    currentUserAllDataMap: {}, //all data from test
     isPilot: true,
     grade: "grade9", //Can only be "grade9" or "grade10". Affects mounted() in main component
     displayLanguage: "en",
@@ -16,6 +15,9 @@ export default new Vuex.Store({
     school: "",
     fullname: "",
     email: "",
+    totalVocabulary: null,
+    selfEstimateFromUser: null,
+    currentUserAllDataMap: {}, //all data from test
     /* WORDS */
     words: {
       c1c5: {
