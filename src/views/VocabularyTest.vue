@@ -43,7 +43,7 @@
 
               <v-text-field
                 v-model="commentsFromUser"
-                label="Skriv her"
+                :label="txtWriteHere"
               ></v-text-field>
               <br />
               <!-- Hvor mange ord på fransk tror du at du egentlig kan,? -->
@@ -291,6 +291,14 @@ export default Vue.extend({
         return "Send inn og avslutt";
       } else {
         return "Submit and finish";
+      }
+    },
+
+    txtWriteHere() {
+      if (this.dispLang == "no") {
+        return "Skriv her";
+      } else {
+        return "Write here";
       }
     }
   },
