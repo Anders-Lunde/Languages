@@ -1,72 +1,72 @@
 <template>
   <div>
-    <h2 class="heading2"></h2>
+    <v-col cols="12" md="7" class="mx-auto">
+      <v-form v-model="valid" ref="form">
+        <v-container fluid>
+          <v-card class="mx-auto" max-width="96%">
+            <v-card-title>
+              <span class="text-h5  mx-auto font-weight-light">{{
+                registerInfoHeading
+              }}</span>
+            </v-card-title>
+            <v-col cols="12" md="7">
+              <v-radio-group
+                v-model="country"
+                :rules="[v => !!v || txtMustBeAnswered]"
+                required
+                :label="questionWhichCounty"
+              >
+                <v-radio :label="lblEngland" value="en"></v-radio>
+                <v-radio :label="lblNorway" value="no"></v-radio>
+                <v-radio :label="lblOther" value="other"></v-radio>
+              </v-radio-group>
+            </v-col>
 
-    <v-form v-model="valid" ref="form">
-      <v-container fluid>
-        <v-card class="mx-auto" max-width="96%">
-          <v-card-title>
-            <span class="text-h5  mx-auto font-weight-light">{{
-              registerInfoHeading
-            }}</span>
-          </v-card-title>
-          <v-col cols="12" md="5">
-            <v-radio-group
-              v-model="country"
-              :rules="[v => !!v || txtMustBeAnswered]"
-              required
-              :label="questionWhichCounty"
-            >
-              <v-radio :label="lblEngland" value="en"></v-radio>
-              <v-radio :label="lblNorway" value="no"></v-radio>
-              <v-radio :label="lblOther" value="other"></v-radio>
-            </v-radio-group>
-          </v-col>
+            <v-col cols="12" md="7">
+              <v-text-field
+                v-model="school"
+                :rules="nameRules"
+                :label="lblSchool"
+                required
+              ></v-text-field>
+            </v-col>
 
-          <v-col cols="12" md="5">
-            <v-text-field
-              v-model="school"
-              :rules="nameRules"
-              :label="lblSchool"
-              required
-            ></v-text-field>
-          </v-col>
+            <v-col cols="12" md="7">
+              <v-text-field
+                v-model="fullname"
+                :rules="nameRules"
+                :label="lblName"
+                required
+              ></v-text-field>
+            </v-col>
 
-          <v-col cols="12" md="5">
-            <v-text-field
-              v-model="fullname"
-              :rules="nameRules"
-              :label="lblName"
-              required
-            ></v-text-field>
-          </v-col>
+            <v-col cols="12" md="7">
+              <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                :label="lblEmail"
+                required
+              ></v-text-field>
+            </v-col>
 
-          <v-col cols="12" md="5">
-            <v-text-field
-              v-model="email"
-              :rules="emailRules"
-              :label="lblEmail"
-              required
-            ></v-text-field>
-          </v-col>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="$router.push('intro-video')" outlined text>
-              {{ btnPrevious }}
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn @click="btnGotoNext()" color="primary">
-              {{ btnNext }}
-            </v-btn>
-            <span class="mx-4 red--text" v-if="nextPressed && !valid">
-              {{ lblInvalidForm }}</span
-            >
-            <v-spacer></v-spacer>
-          </v-card-actions>
-        </v-card>
-      </v-container>
-    </v-form>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn @click="$router.push('intro-video')" outlined text>
+                {{ btnPrevious }}
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn @click="btnGotoNext()" color="primary">
+                {{ btnNext }}
+              </v-btn>
+              <span class="mx-4 red--text" v-if="nextPressed && !valid">
+                {{ lblInvalidForm }}</span
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-container>
+      </v-form>
+    </v-col>
   </div>
 </template>
 
