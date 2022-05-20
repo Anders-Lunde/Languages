@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>asdasd</h2>
     <h1 class="heading1">{{ txtHEading }}</h1>
   </div>
 </template>
