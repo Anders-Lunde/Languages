@@ -32,14 +32,13 @@
             </v-card-text>
 
             <!-- Button to proceed to the very last messages -->
-            <v-card-actions
-              v-if="isSetDone && isFullStopOfTest && !showLastMessages"
-            >
+            <v-card-actions v-if="showFinalForm">
               <v-btn
                 class="mx-auto"
                 @click="
                   showLastMessages = true;
                   showUserfeedback = false;
+                  showFinalForm = false;
                 "
                 color="primary"
               >
@@ -351,6 +350,7 @@ export default Vue.extend({
   props: {},
   data() {
     return {
+      showFinalForm: false,
       showLastMessages: false,
       isValidFinalForm: false,
       selfEstimateFromUser: null,
@@ -723,7 +723,7 @@ export default Vue.extend({
           if (this.dispLang == "no") {
             msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse. Ta en ny test for å prøve igjen.`;
           } else {
-            msg = `Sorry, we were unable to estimate your vocabulary size. Would you like to try again?.`;
+            msg = `Sorry, we were unable to estimate your vocabulary size. Would you like to try again?`;
           }
         } else {
           this.isFullStopOfTest = true;
@@ -825,6 +825,11 @@ export default Vue.extend({
 
       //Save  to vuex
       this.$store.state.currentUserAllDataMap = this.currentUserAllDataMap;
+
+      //Show 'Please go to next screen' button, but only after a timer, to avoid misclick
+      setTimeout(() => {
+        this.showFinalForm = true;
+      }, 1500);
     },
 
     async onClickFinishTest() {
@@ -961,6 +966,12 @@ export default Vue.extend({
       this.$store.state.grade = "grade9";
       //this.$store.state.grade = "grade10";
     }
+    if (this.$store.state.isPilot == null) {
+      console.warn(
+        'WARNIGN: isPilot==null. Setting to "true" (Probably you went directly to this url (should not happen in prod))'
+      );
+      this.$store.state.isPilot = true;
+    }
 
     if (this.$store.state.grade == "grade9") {
       this.currentSetIndex = 0;
@@ -973,6 +984,9 @@ export default Vue.extend({
 
     this.generateSequence(); //generates this.currentUserAllDataMap
     this.setNextWord();
+    console.log("this.$store.state.isPilot ", this.$store.state.isPilot);
+    console.log("this.$store.state.grade ", this.$store.state.grade);
+    console.log("this.debug ", this.debug);
   }
 });
 </script>
