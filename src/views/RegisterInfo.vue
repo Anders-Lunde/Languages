@@ -13,7 +13,7 @@
           <v-col cols="12" md="5">
             <v-radio-group
               v-model="country"
-              :rules="[v => !!v || 'Må besvares']"
+              :rules="[v => !!v || txtMustBeAnswered]"
               required
               :label="questionWhichCounty"
             >
@@ -180,6 +180,13 @@ export default Vue.extend({
         return "Tilbake";
       } else {
         return "Back";
+      }
+    },
+    txtMustBeAnswered() {
+      if (this.dispLang == "no") {
+        return "Må besvares";
+      } else {
+        return "Must be answered";
       }
     }
   },

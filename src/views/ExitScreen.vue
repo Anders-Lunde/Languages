@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="heading1">Takk for din deltakelse!</h1>
+    <h1 class="heading1">{{ txtHEading }}</h1>
   </div>
 </template>
 
@@ -31,6 +31,13 @@ export default Vue.extend({
         return "Tilbake";
       } else {
         return "Back";
+      }
+    },
+    txtHeading() {
+      if (this.dispLang == "no") {
+        return "Takk for din deltakelse!";
+      } else {
+        return "Thanks for your participation";
       }
     }
   },

@@ -8,7 +8,7 @@
             <v-card-title>
               <v-chip v-if="isRealMethod() && debug">REAL</v-chip>
               <span
-                v-if="!showUserfeedback"
+                v-if="!showUserfeedback && !showLastMessages"
                 class="text-h2  mx-auto font-weight-light"
                 >{{ capitalize(currentWord) }}</span
               >
@@ -31,42 +31,72 @@
               ></span>
             </v-card-text>
 
-            <!-- Very last messages (final result + feedback input field) -->
-            <v-card-text v-if="isSetDone && isFullStopOfTest">
-              <!-- Hva syns du om testen? -->
-              <span
-                text-color="black"
-                class="text-h6 mx-auto  font-weight-medium"
+            <!-- Button to proceed to the very last messages -->
+            <v-card-actions
+              v-if="isSetDone && isFullStopOfTest && !showLastMessages"
+            >
+              <v-btn
+                class="mx-auto"
+                @click="
+                  showLastMessages = true;
+                  showUserfeedback = false;
+                "
+                color="primary"
               >
-                {{ txtWhatDidYouThinkAboutTest }}
-              </span>
-
-              <v-text-field
-                v-model="commentsFromUser"
-                :label="txtWriteHere"
-              ></v-text-field>
-              <br />
-              <!-- Hvor mange ord på fransk tror du at du egentlig kan,? -->
-              <span
-                text-color="black"
-                class="text-h6 mx-auto  font-weight-medium"
-              >
-                {{ txtHowManyWords }}
-              </span>
-
-              <v-radio-group v-model="selfEstimateFromUser">
-                <v-radio :label="selfEstimateFromUser1" value="1"></v-radio>
-                <v-radio :label="selfEstimateFromUser2" value="2"></v-radio>
-                <v-radio :label="selfEstimateFromUser3" value="3"></v-radio>
-                <v-radio :label="selfEstimateFromUser4" value="4"></v-radio>
-                <v-radio :label="selfEstimateFromUser5" value="5"></v-radio>
-              </v-radio-group>
-              <br />
-              <!-- :disabled="commentsFromUser.length == 0" -->
-              <v-btn @click="onClickFinishTest()" color="primary">
-                {{ txtSubmitAndFinish }}
+                {{ txtBtnShowLastMessages }}
               </v-btn>
-            </v-card-text>
+            </v-card-actions>
+
+            <!-- Very last messages (final result + feedback input field) -->
+            <v-form
+              v-model="isValidFinalForm"
+              ref="form"
+              v-if="showLastMessages"
+            >
+              <v-card-text>
+                <!-- Hva syns du om testen? -->
+                <span
+                  text-color="black"
+                  class="text-h6 mx-auto  font-weight-medium"
+                >
+                  {{ txtWhatDidYouThinkAboutTest }}
+                </span>
+
+                <v-text-field
+                  v-model="commentsFromUser"
+                  :label="txtWriteHere"
+                ></v-text-field>
+                <br />
+                <!-- Hvor mange ord på fransk tror du at du egentlig kan,? -->
+                <span
+                  text-color="black"
+                  class="text-h6 mx-auto  font-weight-medium"
+                >
+                  {{ txtHowManyWords }}
+                </span>
+
+                <v-radio-group
+                  required
+                  v-model="selfEstimateFromUser"
+                  :rules="[v => !!v || txtMustBeAnswered]"
+                >
+                  <v-radio :label="selfEstimateFromUser1" value="1"></v-radio>
+                  <v-radio :label="selfEstimateFromUser2" value="2"></v-radio>
+                  <v-radio :label="selfEstimateFromUser3" value="3"></v-radio>
+                  <v-radio :label="selfEstimateFromUser4" value="4"></v-radio>
+                  <v-radio :label="selfEstimateFromUser5" value="5"></v-radio>
+                </v-radio-group>
+                <br />
+                <!-- :disabled="commentsFromUser.length == 0" -->
+                <v-btn
+                  @click="onClickFinishTest()"
+                  :disabled="!isValidFinalForm"
+                  color="primary"
+                >
+                  {{ txtSubmitAndFinish }}
+                </v-btn>
+              </v-card-text>
+            </v-form>
 
             <!-- Debug things -->
 
@@ -300,11 +330,29 @@ export default Vue.extend({
       } else {
         return "Write here";
       }
+    },
+
+    txtMustBeAnswered() {
+      if (this.dispLang == "no") {
+        return "Må besvares";
+      } else {
+        return "Must be answered";
+      }
+    },
+
+    txtBtnShowLastMessages() {
+      if (this.dispLang == "no") {
+        return "Vennligst gå til neste skjerm!";
+      } else {
+        return "Please go to next screen!";
+      }
     }
   },
   props: {},
   data() {
     return {
+      showLastMessages: false,
+      isValidFinalForm: false,
       selfEstimateFromUser: null,
       debug: false,
       showProgressCircularTSDupload: false,
@@ -518,20 +566,6 @@ export default Vue.extend({
       this.currentUserAllDataMap[currentBand][currentSet]["array"][
         this.currentWordIndex
       ].userAnswer = response;
-
-      // //todo debug
-      // //1
-      // const correctAnswer = this.currentUserAllDataMap[currentBand][currentSet][
-      //   "array"
-      // ][this.currentWordIndex].isReal;
-      // console.log("correctAnswer", correctAnswer);
-      // //2
-      // this.currentUserAllDataMap[currentBand][currentSet]["array"][
-      //   this.currentWordIndex
-      // ].userAnswer = correctAnswer;
-      // //3
-      // response = correctAnswer;
-      // //debug
 
       //Record score
       const isRealWord = this.currentUserAllDataMap[currentBand][currentSet][
@@ -779,12 +813,12 @@ export default Vue.extend({
       );
       if (this.dispLang == "no") {
         this.feedbackMessage =
-          "Sluttresultat: <br>" +
+          "<u>Sluttresultat: </u><br>" +
           this.feedbackMessage +
           "<br><br>Hvis du vil ta vare på resultatet ditt, kan du ta et skjermbilde av denne siden.";
       } else {
         this.feedbackMessage =
-          "Final result: <br>" +
+          "<u>Final result: </u><br>" +
           this.feedbackMessage +
           "<br><br>If you wish to save your result, you may take a screen shot of this page.";
       }
@@ -794,19 +828,21 @@ export default Vue.extend({
     },
 
     async onClickFinishTest() {
-      //Save  to vuex
-      this.$store.state.commentsFromUser = this.commentsFromUser;
-      this.$store.state.totalVocabulary = this.totalVocabulary; //I want this value also in the outer map (resulting in it being in two places then)
-      this.$store.state.selfEstimateFromUser = this.selfEstimateFromUser;
-      //Remove data-set from Vuex before submitting data (words)
-      Vue.delete(this.$store.state, "words");
-      //Send to server
-      await this.sendTestDataToServer();
-      //Goto exit page
-      if (this.debug) {
-        this.$router.push("data-presentation");
-      } else {
-        this.$router.push("exit-screen");
+      if (this.$refs.form.validate()) {
+        //Save  to vuex
+        this.$store.state.commentsFromUser = this.commentsFromUser;
+        this.$store.state.totalVocabulary = this.totalVocabulary; //I want this value also in the outer map (resulting in it being in two places then)
+        this.$store.state.selfEstimateFromUser = this.selfEstimateFromUser;
+        //Remove data-set from Vuex before submitting data (words)
+        Vue.delete(this.$store.state, "words");
+        //Send to server
+        await this.sendTestDataToServer();
+        //Goto exit page
+        if (this.debug) {
+          this.$router.push("data-presentation");
+        } else {
+          this.$router.push("exit-screen");
+        }
       }
     },
 
@@ -921,6 +957,9 @@ export default Vue.extend({
     if (this.$route.query.debug == "1") {
       console.log("Debug mode detected");
       this.debug = true;
+      this.$store.state.isPilot = true;
+      this.$store.state.grade = "grade9";
+      //this.$store.state.grade = "grade10";
     }
 
     if (this.$store.state.grade == "grade9") {

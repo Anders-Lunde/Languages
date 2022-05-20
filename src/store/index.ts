@@ -8,7 +8,7 @@ export default new Vuex.Store({
     createdTS: null,
     createdTSreadable: null,
     commentsFromUser: "",
-    isPilot: true,
+    isPilot: null,
     grade: "grade9", //Can only be "grade9" or "grade10". Affects mounted() in main component
     displayLanguage: "en",
     country: "",

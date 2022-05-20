@@ -1,14 +1,41 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import SelectLanguage from "../views/SelectLanguage.vue";
+import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
     path: "/",
-    name: "SelectLanguage",
-    component: SelectLanguage
+    name: "Home",
+    component: Home
+  },
+  {
+    path: "/pilot",
+    name: "Pilot",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/SelectLanguage.vue")
+  },
+  {
+    path: "/grade9",
+    name: "Grade9",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/SelectLanguage.vue")
+  },
+  {
+    path: "/grade10",
+    name: "Grade10",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/SelectLanguage.vue")
   },
   {
     path: "/data-presentation",

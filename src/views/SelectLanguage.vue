@@ -90,6 +90,27 @@ export default Vue.extend({
     setDisplayLanguage: function() {
       this.$store.state.displayLanguage = this.radioGroupDisplayLanguage;
     }
+  },
+
+  mounted() {
+    //Is pilot?
+    if (this.$route.path.includes("pilot")) {
+      console.log("Route is pilot");
+      this.$store.state.isPilot = true;
+    } else {
+      console.log("Route is NOT pilot");
+      this.$store.state.isPilot = false;
+    }
+    //Is grade 9?
+    if (this.$route.path.includes("grade9")) {
+      console.log("Route is grade 9");
+      this.$store.state.grade = "grade9";
+    }
+    //Is grade 9?
+    if (this.$route.path.includes("grade10")) {
+      console.log("Route is grade 10");
+      this.$store.state.grade = "grade10";
+    }
   }
 });
 </script>
