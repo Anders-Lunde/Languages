@@ -796,6 +796,16 @@ export default Vue.extend({
      *METHOD START:
      */
     onTestFinished() {
+      let txtExtraFinalBandNo = "";
+      let txtExtraFinalBandEn = "";
+
+      if (this.currentBandIndex + 1 == this.bands.length) {
+        txtExtraFinalBandNo =
+          " Du har nådd grensen for maksimal vokabularstørrelse denne testen kan beregne. ";
+        txtExtraFinalBandEn =
+          " You have reached the maximum vocabulary size that this test can calculate. ";
+      }
+
       this.showUserfeedback = true;
       this.feedbackMessage = this.feedbackMessage.replace(
         "Ta en ny test på neste nivå for å utforske nivået ditt.",
@@ -814,11 +824,13 @@ export default Vue.extend({
         this.feedbackMessage =
           "<u>Sluttresultat: </u><br>" +
           this.feedbackMessage +
+          txtExtraFinalBandNo +
           "<br><br>Hvis du vil ta vare på resultatet ditt, kan du ta et skjermbilde av denne siden.";
       } else {
         this.feedbackMessage =
           "<u>Final result: </u><br>" +
           this.feedbackMessage +
+          txtExtraFinalBandEn +
           "<br><br>If you wish to save your result, you may take a screen shot of this page.";
       }
 
@@ -961,8 +973,10 @@ export default Vue.extend({
     if (this.$route.query.debug == "1") {
       console.log("Debug mode detected");
       this.debug = true;
-      this.$store.state.isPilot = true;
+      this.$store.state.isPilot = false;
       this.$store.state.grade = "grade9";
+      this.$store.state.displayLanguage = "no";
+
       //this.$store.state.grade = "grade10";
     }
     if (this.$store.state.isPilot == null) {
