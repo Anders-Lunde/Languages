@@ -1,6 +1,24 @@
 <template>
   <div>
     <h1 class="heading1">Data presentasjon</h1>
+    <h2>Passord:</h2>
+    <v-container fluid>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show1 ? 'text' : 'password'"
+            name="inputBox"
+            label="Input password here"
+            hint="Input password here"
+            @click:append="show1 = !show1"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+    </v-container>
+    <h2>Hent data:</h2>
+    <br />
 
     <v-btn @click="populateTable()">
       Load data from server, and display in table</v-btn
@@ -68,7 +86,9 @@ export default Vue.extend({
   props: {},
   data() {
     return {
+      password: null,
       debug: false,
+      show1: false,
       showAllTestsInAllMenues: false,
       // eslint-disable-next-line
       //testEntries: [],
@@ -135,7 +155,10 @@ export default Vue.extend({
           //"http://localhost:3022/get-data",
           "https://app.languages.no/api/get-data",
           {
-            method: "GET"
+            method: "GET",
+            headers: {
+              password: this.password
+            }
           }
         );
         if (response.status == 200) {
