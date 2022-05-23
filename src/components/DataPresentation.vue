@@ -163,6 +163,8 @@ export default Vue.extend({
         );
         if (response.status == 200) {
           arrayOfjsons = await response.json();
+        } else {
+          alert(response.status, "Error: possibly wrong password");
         }
       } catch (err) {
         console.log("Fetch Error: ", err);
