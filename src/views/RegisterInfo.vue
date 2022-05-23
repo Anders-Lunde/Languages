@@ -84,15 +84,15 @@ export default Vue.extend({
     return {
       valid: false,
       nextPressed: false,
-      fullname: "",
+      fullname: "asd",
       nameRules: [v => !!v || "Name is required"],
-      email: "",
+      email: "asd@asd.asd",
       emailRules: [
         v => !!v || "E-mail is required",
         v => /\S+@\S+\.\S+/.test(v) || "E-mail must be valid"
       ],
-      country: "",
-      school: ""
+      country: "en",
+      school: "asd"
     };
   },
   computed: {
@@ -206,7 +206,7 @@ export default Vue.extend({
         this.$store.state.fullname = this.fullname;
         this.$store.state.email = this.email;
         //Goto test
-        this.$router.push("vocabulary-test");
+        this.$router.push("vocabulary-test?debug=1");
       }
     }
   }
