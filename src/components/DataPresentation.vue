@@ -111,8 +111,7 @@ export default Vue.extend({
           ",left=" +
           (screen.width - 840)
       );
-      console.log(arrayOfjsons);
-      win.document.body.innerHTML = arrayOfjsons;
+      win.document.body.innerHTML = JSON.stringify(arrayOfjsons);
     },
     /*
      * METHOD START:
