@@ -974,8 +974,8 @@ export default Vue.extend({
       console.log("Debug mode detected");
       this.debug = true;
       this.$store.state.isPilot = false;
-      this.$store.state.grade = "grade9";
-      this.$store.state.displayLanguage = "no";
+      this.$store.state.grade = "grade10";
+      this.$store.state.displayLanguage = "en";
       //this.$store.state.grade = "grade10";
     }
     if (this.$store.state.isPilot == null) {
