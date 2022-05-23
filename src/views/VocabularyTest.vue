@@ -32,17 +32,16 @@
             </v-card-text>
 
             <!-- Button to proceed to the very last messages -->
-            <v-card-actions v-if="showFinalForm">
+            <v-card-actions v-if="showFinalFormBtn">
               <v-btn
                 class="mx-auto"
-                @click="
-                  showLastMessages = true;
-                  showUserfeedback = false;
-                  showFinalForm = false;
-                "
+                @click="showFinalFormBtnClicked()"
                 color="primary"
               >
                 {{ txtBtnShowLastMessages }}
+                <span v-if="showFinalFormBtnFirstClick">{{
+                  txtBtnShowLastMessagesSecondClick
+                }}</span>
               </v-btn>
             </v-card-actions>
 
@@ -341,16 +340,25 @@ export default Vue.extend({
 
     txtBtnShowLastMessages() {
       if (this.dispLang == "no") {
-        return "Vennligst gå til neste skjerm!";
+        return "Klikk for neste skjerm. ";
       } else {
-        return "Please go to next screen!";
+        return "Click for next screen. ";
+      }
+    },
+
+    txtBtnShowLastMessagesSecondClick() {
+      if (this.dispLang == "no") {
+        return " Vennligst klikk en gang til.";
+      } else {
+        return " Please click again.";
       }
     }
   },
   props: {},
   data() {
     return {
-      showFinalForm: false,
+      showFinalFormBtn: false,
+      showFinalFormBtnFirstClick: false,
       showLastMessages: false,
       isValidFinalForm: false,
       selfEstimateFromUser: null,
@@ -837,10 +845,7 @@ export default Vue.extend({
       //Save  to vuex
       this.$store.state.currentUserAllDataMap = this.currentUserAllDataMap;
 
-      //Show 'Please go to next screen' button, but only after a timer, to avoid misclick
-      setTimeout(() => {
-        this.showFinalForm = true;
-      }, 1500);
+      this.showFinalFormBtn = true;
     },
 
     async onClickFinishTest() {
@@ -967,6 +972,19 @@ export default Vue.extend({
         ];
       }
       return array;
+    },
+    /*
+     *METHOD START:
+     */
+    showFinalFormBtnClicked: function() {
+      //Must click twice (to avoid premature clicking)
+      if (this.showFinalFormBtnFirstClick == false) {
+        this.showFinalFormBtnFirstClick = true;
+        return;
+      }
+      this.showLastMessages = true;
+      this.showUserfeedback = false;
+      this.showFinalFormBtn = false;
     }
   },
   mounted() {
