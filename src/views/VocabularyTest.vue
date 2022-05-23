@@ -423,7 +423,7 @@ export default Vue.extend({
         //Set global which will after all loops be only the most recent band (current)
         this.averageVocabularySizeForCurrentBand = averageVocabularySizeForBand;
       }
-      this.currentUserAllDataMap["totalVocabulary"] = totalVocabulary;
+      //this.currentUserAllDataMap["totalVocabulary"] = totalVocabulary; //deprecated. now only in outer map
       this.totalVocabulary = totalVocabulary;
       // } else {
       //   return -1;
@@ -456,7 +456,6 @@ export default Vue.extend({
       /* GENERATE A MAP THAT LOOKS LIKE THIS WHEN FILLED.
       FILLED SEQUENTIOALLY, AFTER EACH BAND COMPLETES.
       const map = {
-        totalVocabulary: 0,
         c1c5: {
           set1: {
             vocabularySizeForThisSet: 0,
@@ -836,7 +835,7 @@ export default Vue.extend({
       if (this.$refs.form.validate()) {
         //Save  to vuex
         this.$store.state.commentsFromUser = this.commentsFromUser;
-        this.$store.state.totalVocabulary = this.totalVocabulary; //I want this value also in the outer map (resulting in it being in two places then)
+        this.$store.state.totalVocabulary = this.totalVocabulary;
         this.$store.state.selfEstimateFromUser = this.selfEstimateFromUser;
         //Remove data-set from Vuex before submitting data (words)
         Vue.delete(this.$store.state, "words");
