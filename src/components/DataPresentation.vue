@@ -20,6 +20,13 @@
     <h2>Hent data:</h2>
     <br />
 
+    <v-checkbox
+      v-model="doIncludeItemdata"
+      label="Include itemdata"
+    ></v-checkbox>
+
+    <br />
+
     <v-btn @click="populateTable()">
       Load data from server, and display in table</v-btn
     >
@@ -87,6 +94,7 @@ export default Vue.extend({
   data() {
     return {
       password: null,
+      doIncludeItemdata: false,
       debug: false,
       show1: false,
       showAllTestsInAllMenues: false,
@@ -157,7 +165,8 @@ export default Vue.extend({
           {
             method: "GET",
             headers: {
-              password: this.password
+              password: this.password,
+              doIncludeItemdata: this.doIncludeItemdata
             }
           }
         );
