@@ -801,7 +801,9 @@ export default Vue.extend({
         this.setNextWord();
         return; //RETURN
       } else {
-        const setDuration = (Date.now() - this.tsCurrentSetStart).toFixed(1);
+        let setDuration = (Date.now() - this.tsCurrentSetStart) / 1000; //in sec
+        setDuration = setDuration.toFixed(1); //to 1 decimal. retruns string.
+        setDuration = parseFloat(setDuration);
         this.tsCurrentSetStart;
         this.currentUserAllDataMap[currentBand][currentSet][
           "duration"
