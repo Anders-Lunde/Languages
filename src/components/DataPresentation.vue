@@ -22,7 +22,7 @@
 
     <v-checkbox
       v-model="doIncludeItemdata"
-      label="Include itemdata"
+      label="Include word itemdata"
     ></v-checkbox>
 
     <br />

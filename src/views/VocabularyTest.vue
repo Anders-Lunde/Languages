@@ -2,14 +2,14 @@
   <div style="height: 66%">
     <v-container fill-height fluid>
       <v-row class="" justify="center">
-        <v-col cols="12" md="4" sm="7">
+        <v-col cols="12" md="3" sm="7">
           <v-card>
             <!--Current word / Title -->
             <v-card-title>
               <v-chip v-if="isRealMethod() && debug">REAL</v-chip>
               <span
                 v-if="!showUserfeedback && !showLastMessages"
-                class="text-h2  mx-auto font-weight-light"
+                class="word  mx-auto font-weight-light"
                 >{{ capitalize(currentWord) }}</span
               >
             </v-card-title>
@@ -186,15 +186,7 @@
             <!-- No, Yes, and OK buttons -->
             <v-card-actions class="mt-10">
               <v-spacer></v-spacer>
-              <!-- OK button between sets -->
-              <v-btn
-                v-if="isSetDone && isFullStopOfTest == false"
-                large
-                @click="setDoneOkBtn()"
-                color="primary"
-              >
-                {{ btnSetDoneOk }}
-              </v-btn>
+              <v-spacer></v-spacer>
 
               <!-- No button -->
               <v-btn
@@ -219,6 +211,16 @@
                 {{ btnYes }}
               </v-btn>
               <v-spacer></v-spacer>
+              <v-spacer></v-spacer>
+              <!-- OK button between sets -->
+              <v-btn
+                v-if="isSetDone && isFullStopOfTest == false"
+                large
+                @click="setDoneOkBtn()"
+                color="light-gray"
+              >
+                {{ btnSetDoneOk }}
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -259,9 +261,9 @@ export default Vue.extend({
     },
     btnSetDoneOk() {
       if (this.dispLang == "no") {
-        return "OK";
+        return "Fortsett...";
       } else {
-        return "OK";
+        return "Continue...";
       }
     },
     selfEstimateFromUser1() {
@@ -357,6 +359,8 @@ export default Vue.extend({
   props: {},
   data() {
     return {
+      tsGlobalStart: null,
+      tsCurrentSetStart: null,
       showFinalFormBtn: false,
       showFinalFormBtnFirstClick: false,
       showLastMessages: false,
@@ -383,7 +387,8 @@ export default Vue.extend({
       atLeastOneSetInCurrentBandAboveCutoff: false,
       vocabularySizeForThisSet: 0,
       PercentageForThisSet: 0,
-      totalScoreForThisSet: 0
+      totalScoreForThisSet: 0,
+      currentPart: 1
     };
   },
 
@@ -743,7 +748,15 @@ export default Vue.extend({
         }
       }
 
-      this.feedbackMessage = msg;
+      // this is needed because of '|| this.currentBandIndex > 0' in case 2 above.
+      // with new forcing band 2 rules, this is neccessary.
+      if (this.totalVocabulary <= 0) {
+        if (this.dispLang == "no") {
+          msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse.`;
+        } else {
+          msg = `Sorry, we were unable to estimate your vocabulary size.`;
+        }
+      }
 
       //If there are no more bands/sets
       if (
@@ -754,6 +767,33 @@ export default Vue.extend({
         console.log("Full stop set in place = 825");
         this.isFullStopOfTest = true;
       }
+
+      /*
+      //NEW STUFF AFTER MEETING 25.05
+      */
+      //Calculate del1, del2, del3 etc
+      let partStr = "";
+
+      if (this.dispLang == "no") {
+        partStr = `Du er ferdig med del ${
+          this.currentPart
+        }. Gå videre til del ${this.currentPart + 1}.`;
+      } else {
+        partStr = `You are done with part ${
+          this.currentPart
+        }. Please proceed to part ${this.currentPart + 1}.`;
+      }
+      //Force everyone past the first band:
+      if (this.currentBandIndex == 0) {
+        this.isFullStopOfTest = false;
+      }
+      //New display messages:
+      if (this.isFullStopOfTest == false) {
+        msg = partStr;
+      }
+
+      this.feedbackMessage = msg;
+
       //If not done with current set, goto next word
       if (!this.isSetDone) {
         //Iterate
@@ -761,6 +801,13 @@ export default Vue.extend({
         this.setNextWord();
         return; //RETURN
       } else {
+        const setDuration = (Date.now() - this.tsCurrentSetStart).toFixed(1);
+        this.tsCurrentSetStart;
+        this.currentUserAllDataMap[currentBand][currentSet][
+          "duration"
+        ] = setDuration;
+
+        this.currentPart += 1;
         this.showUserfeedback = true;
 
         if (this.isFullStopOfTest) {
@@ -795,6 +842,7 @@ export default Vue.extend({
         //Prepare for next set/band
         this.generateSequence(); //generates this.currentUserAllDataMap
         this.setNextWord();
+        this.tsCurrentSetStart = Date.now();
       } else {
         this.onTestFinished();
       }
@@ -991,8 +1039,8 @@ export default Vue.extend({
     if (this.$route.query.debug == "1") {
       console.log("Debug mode detected");
       this.debug = true;
-      this.$store.state.isPilot = false;
-      this.$store.state.grade = "grade10";
+      this.$store.state.isPilot = true;
+      this.$store.state.grade = "grade9";
       this.$store.state.displayLanguage = "no";
       //this.$store.state.grade = "grade10";
     }
@@ -1014,6 +1062,7 @@ export default Vue.extend({
 
     this.generateSequence(); //generates this.currentUserAllDataMap
     this.setNextWord();
+    this.tsCurrentSetStart = Date.now();
     console.log("this.$store.state.isPilot ", this.$store.state.isPilot);
     console.log("this.$store.state.grade ", this.$store.state.grade);
     console.log("this.debug ", this.debug);
@@ -1026,5 +1075,9 @@ export default Vue.extend({
   transform: scale(100);
   background-color: red;
   font-size: 50rem;
+}
+
+.word {
+  font-size: 220%;
 }
 </style>
