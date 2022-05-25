@@ -66,7 +66,7 @@ export default Vue.extend({
   props: {},
   data() {
     return {
-      introductionVideo: require("@/assets/example_video.mp4")
+      dummy: ""
     };
   },
 

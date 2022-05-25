@@ -212,14 +212,14 @@
               </v-btn>
               <v-spacer></v-spacer>
               <v-spacer></v-spacer>
-              <!-- OK button between sets -->
+              <!-- button between sets -->
               <v-btn
                 v-if="isSetDone && isFullStopOfTest == false"
                 large
                 @click="setDoneOkBtn()"
                 color="light-gray"
               >
-                {{ btnSetDoneOk }}
+                {{ txtBtnSetDone }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -259,7 +259,7 @@ export default Vue.extend({
         return "No";
       }
     },
-    btnSetDoneOk() {
+    txtBtnSetDone() {
       if (this.dispLang == "no") {
         return "Fortsett...";
       } else {
@@ -310,9 +310,9 @@ export default Vue.extend({
     },
     txtWhatDidYouThinkAboutTest() {
       if (this.dispLang == "no") {
-        return "(Valgfritt) Hva syns du om testen?";
+        return "(Valgfritt) Hva syns du om testen og resultatet du fikk?";
       } else {
-        return "(Optional) What did you think about this test?";
+        return "(Optional) What did you think about this test and the score you got?";
       }
     },
 

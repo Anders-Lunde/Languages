@@ -9,6 +9,7 @@
                 registerInfoHeading
               }}</span>
             </v-card-title>
+            <!--   In which country do you attend school?
             <v-col cols="12" md="7">
               <v-radio-group
                 v-model="country"
@@ -21,6 +22,7 @@
                 <v-radio :label="lblOther" value="other"></v-radio>
               </v-radio-group>
             </v-col>
+            -->
 
             <v-col cols="12" md="7">
               <v-text-field
@@ -40,7 +42,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="7">
+            <v-col cols="12" md="7" v-if="enableEmailQuestion">
               <v-text-field
                 v-model="email"
                 :rules="emailRules"
@@ -82,10 +84,11 @@ export default Vue.extend({
   },
   data() {
     return {
+      enableEmailQuestion: false,
       valid: false,
       nextPressed: false,
       fullname: "",
-      nameRules: [v => !!v || "Name is required"],
+      nameRules: [v => !!v || "Required"],
       email: "",
       emailRules: [
         v => !!v || "E-mail is required",
@@ -108,9 +111,9 @@ export default Vue.extend({
     },
     lblName() {
       if (this.dispLang == "no") {
-        return "Ditt fulle navn";
+        return "Skriv inn ID'en som står på lesetesten din";
       } else {
-        return "Your full name";
+        return "Enter the ID number from your reading test";
       }
     },
     lblSchool() {
@@ -204,7 +207,9 @@ export default Vue.extend({
         this.$store.state.country = this.country;
         this.$store.state.school = this.school;
         this.$store.state.fullname = this.fullname;
-        this.$store.state.email = this.email;
+        if (this.enableEmailQuestion) {
+          this.$store.state.email = this.email;
+        }
         //Goto test
         this.$router.push("vocabulary-test");
       }

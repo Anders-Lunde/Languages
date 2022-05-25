@@ -23,7 +23,11 @@
               {{ btnPrevious }}
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn @click="$router.push('register-info')" color="primary">
+            <v-btn
+              :disabled="disableBtnNext"
+              @click="$router.push('register-info')"
+              color="primary"
+            >
               {{ btnNext }}
             </v-btn>
             <v-spacer></v-spacer>
@@ -51,9 +55,17 @@ export default Vue.extend({
 
     btnNext() {
       if (this.dispLang == "no") {
-        return "Neste";
+        if (this.disableBtnNext) {
+          return "Se hele videoen for å gå videre...";
+        } else {
+          return "Neste";
+        }
       } else {
-        return "Next";
+        if (this.disableBtnNext) {
+          return "Watch the whole video to proceed...";
+        } else {
+          return "Next";
+        }
       }
     },
     btnPrevious() {
@@ -67,7 +79,8 @@ export default Vue.extend({
   props: {},
   data() {
     return {
-      introductionVideo: require("@/assets/example_video.mp4")
+      introductionVideo: require("@/assets/norwegian.mp4"),
+      disableBtnNext: true
     };
   },
 
@@ -80,12 +93,29 @@ export default Vue.extend({
     }
   },
   mounted() {
-    //Important! Neccesary to update source of videos on screen change (ii change).
-    //Loading videos also ensures smooth experience on button clicks.
+    //Loading videos  ensures smooth experience
     const video = this.$refs.introductionVideo;
     if (video) {
       video.load();
     }
+    /*
+    video.addEventListener("pause", function() {
+      // enable NEXT button when video finished:
+      this.disableBtnNext = false;
+      console.log("asd");
+    });
+*/
+    // eslint-disable-next-line
+    const vm = this;
+    setInterval(function() {
+      if (vm.disableBtnNext == false) {
+        return;
+      }
+      if (video.duration - video.currentTime < 1) {
+        console.log("video done");
+        vm.disableBtnNext = false;
+      }
+    }, 500);
   }
 });
 </script>
