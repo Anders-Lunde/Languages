@@ -821,18 +821,16 @@ export default Vue.extend({
 
         if (this.isFullStopOfTest) {
           //Record percentageYes
-          let percentage =
+          const percentage =
             this.totalClicksYes / (this.totalClicksYes + this.totalClicksNo);
-          percentage = percentage.toFixed(1); //to 1 decimal. retruns string.
-          percentage = parseFloat(percentage);
-          this.currentUserAllDataMap["percentageYes"] = percentage;
+          this.$store.state.percentageYes = percentage;
           //Record duration of whole test
           let totalDuration = (Date.now() - this.tsGlobalStart) / 1000; //in sec
           totalDuration = totalDuration.toFixed(1); //to 1 decimal. retruns string.
           totalDuration = parseFloat(totalDuration);
-          this.currentUserAllDataMap["totalDuration"] = totalDuration;
+          this.$store.state.totalDuration = totalDuration;
           //Record totalDurationAvgPerSet
-          this.currentUserAllDataMap["totalDurationAvgPerSet"] =
+          this.$store.state.totalDurationAvgPerSet =
             totalDuration / (this.currentPart - 1);
           //Goto test finish
           this.onTestFinished();
