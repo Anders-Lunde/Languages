@@ -7,6 +7,9 @@ export default new Vuex.Store({
   state: {
     createdTS: null,
     createdTSreadable: null,
+    totalDuration: null,
+    totalDurationAvgPerSet: null,
+    percentageYes: null,
     commentsFromUser: "",
     isPilot: null,
     grade: "grade9", //Can only be "grade9" or "grade10". Affects mounted() in main component

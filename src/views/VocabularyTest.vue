@@ -359,6 +359,8 @@ export default Vue.extend({
   props: {},
   data() {
     return {
+      totalClicksYes: 0,
+      totalClicksNo: 0,
       tsGlobalStart: null,
       tsCurrentSetStart: null,
       showFinalFormBtn: false,
@@ -571,6 +573,11 @@ export default Vue.extend({
     //(so they can be displayed in debug view after each response)
     //However, stricktly speaking only after end of test would be neccessary.
     onResponse: function(response) {
+      if (response) {
+        this.totalClicksYes += 1;
+      } else {
+        this.totalClicksNo += 1;
+      }
       const currentBand = this.bands[this.currentBandIndex];
       const currentSet = this.sets[this.currentSetIndex];
 
@@ -801,6 +808,8 @@ export default Vue.extend({
         this.setNextWord();
         return; //RETURN
       } else {
+        this.currentPart += 1;
+        this.showUserfeedback = true;
         //Record duration of current set
         let setDuration = (Date.now() - this.tsCurrentSetStart) / 1000; //in sec
         setDuration = setDuration.toFixed(1); //to 1 decimal. retruns string.
@@ -810,15 +819,21 @@ export default Vue.extend({
           "duration"
         ] = setDuration;
 
-        this.currentPart += 1;
-        this.showUserfeedback = true;
-
         if (this.isFullStopOfTest) {
+          //Record percentageYes
+          let percentage =
+            this.totalClicksYes / (this.totalClicksYes + this.totalClicksNo);
+          percentage = percentage.toFixed(1); //to 1 decimal. retruns string.
+          percentage = parseFloat(percentage);
+          this.currentUserAllDataMap["percentageYes"] = percentage;
           //Record duration of whole test
           let totalDuration = (Date.now() - this.tsGlobalStart) / 1000; //in sec
           totalDuration = totalDuration.toFixed(1); //to 1 decimal. retruns string.
           totalDuration = parseFloat(totalDuration);
           this.currentUserAllDataMap["totalDuration"] = totalDuration;
+          //Record totalDurationAvgPerSet
+          this.currentUserAllDataMap["totalDurationAvgPerSet"] =
+            totalDuration / (this.currentPart - 1);
           //Goto test finish
           this.onTestFinished();
         }
