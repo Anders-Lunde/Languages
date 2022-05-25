@@ -801,6 +801,7 @@ export default Vue.extend({
         this.setNextWord();
         return; //RETURN
       } else {
+        //Record duration of current set
         let setDuration = (Date.now() - this.tsCurrentSetStart) / 1000; //in sec
         setDuration = setDuration.toFixed(1); //to 1 decimal. retruns string.
         setDuration = parseFloat(setDuration);
@@ -813,6 +814,12 @@ export default Vue.extend({
         this.showUserfeedback = true;
 
         if (this.isFullStopOfTest) {
+          //Record duration of whole test
+          let totalDuration = (Date.now() - this.tsGlobalStart) / 1000; //in sec
+          totalDuration = totalDuration.toFixed(1); //to 1 decimal. retruns string.
+          totalDuration = parseFloat(totalDuration);
+          this.currentUserAllDataMap["totalDuration"] = totalDuration;
+          //Goto test finish
           this.onTestFinished();
         }
       }
@@ -1065,6 +1072,7 @@ export default Vue.extend({
     this.generateSequence(); //generates this.currentUserAllDataMap
     this.setNextWord();
     this.tsCurrentSetStart = Date.now();
+    this.tsGlobalStart = Date.now();
     console.log("this.$store.state.isPilot ", this.$store.state.isPilot);
     console.log("this.$store.state.grade ", this.$store.state.grade);
     console.log("this.debug ", this.debug);
