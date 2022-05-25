@@ -9,6 +9,8 @@ export default new Vuex.Store({
     createdTSreadable: null,
     totalDuration: null,
     totalDurationAvgPerSet: null,
+    setsCompleted: null,
+    bandsCompleted: null,
     percentageYes: null,
     commentsFromUser: "",
     isPilot: null,

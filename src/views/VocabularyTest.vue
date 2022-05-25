@@ -832,6 +832,9 @@ export default Vue.extend({
           //Record totalDurationAvgPerSet
           this.$store.state.totalDurationAvgPerSet =
             totalDuration / (this.currentPart - 1);
+          //Record setsCompleted and bandsCompleted
+          this.$store.state.setsCompleted = this.currentPart - 1;
+          this.$store.state.bandsCompleted = this.currentBandIndex + 1;
           //Goto test finish
           this.onTestFinished();
         }
