@@ -24,7 +24,7 @@
               :disabled="radioGroupDisplayLanguage.length == 0"
               class="mx-auto"
               color="primary"
-              @click="$router.push('intro-video')"
+              @click="$router.push('register-info')"
             >
               {{ btnNext }}
             </v-btn>

@@ -2,7 +2,8 @@
   <div>
     <h1 class="heading1">LANGUAGES</h1>
     <v-container fluid>
-      <v-row>
+      <!-- Video and video related  buttons -->
+      <v-row v-if="showVideo" justify="center">
         <v-card class="mx-auto" max-width="96%">
           <v-card-title>
             <span class="text-h5  mx-auto font-weight-light">Intro video</span>
@@ -18,21 +19,47 @@
             </video>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="$router.push('/')" outlined text>
-              {{ btnPrevious }}
-            </v-btn>
-            <v-spacer></v-spacer>
             <v-btn
               :disabled="disableBtnNext"
-              @click="$router.push('register-info')"
+              @click="showVideo = false"
               color="primary"
+              class="mx-auto"
             >
               {{ btnNext }}
             </v-btn>
-            <v-spacer></v-spacer>
+          </v-card-actions>
+          <v-card-actions>
+            <v-btn @click="$router.push('/')" outlined text class="mx-auto">
+              {{ btnPrevious }}
+            </v-btn>
           </v-card-actions>
         </v-card>
+      </v-row>
+      <!-- Message to user that appears after video -->
+      <v-row v-if="!showVideo" justify="center">
+        <v-col cols="12" md="7" sm="7">
+          <v-card>
+            <v-card-text class="text-center">
+              <span
+                text-color="black"
+                class="text-h5 mx-auto black--text font-weight-medium"
+              >
+                {{ txtFinalTextInstruction }}
+              </span>
+            </v-card-text>
+
+            <!-- Button to proceed to the very last messages -->
+            <v-card-actions>
+              <v-btn
+                class="mx-auto"
+                @click="$router.push('vocabulary-test')"
+                color="primary"
+              >
+                {{ txtStartTest }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -74,13 +101,28 @@ export default Vue.extend({
       } else {
         return "Back";
       }
+    },
+    txtStartTest() {
+      if (this.dispLang == "no") {
+        return "Start testen";
+      } else {
+        return "Start the test";
+      }
+    },
+    txtFinalTextInstruction() {
+      if (this.dispLang == "no") {
+        return "Testen tar ca. 15 minutter. Jo bedre du gjør det, jo flere deler får du.";
+      } else {
+        return "The test lasts ca. 15 minutes. The better you perform, the more parts you get.";
+      }
     }
   },
   props: {},
   data() {
     return {
       introductionVideo: require("@/assets/norwegian.mp4"),
-      disableBtnNext: true
+      disableBtnNext: true,
+      showVideo: true
     };
   },
 
@@ -108,7 +150,7 @@ export default Vue.extend({
     // eslint-disable-next-line
     const vm = this;
     setInterval(function() {
-      if (vm.disableBtnNext == false) {
+      if (vm.disableBtnNext == false || vm.showVideo == false) {
         return;
       }
       if (video.duration - video.currentTime < 1) {

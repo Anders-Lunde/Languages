@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="heading1">LANGUAGES</h1>
     <v-col cols="12" md="7" class="mx-auto">
       <v-form v-model="valid" ref="form">
         <v-container fluid>
@@ -111,9 +112,9 @@ export default Vue.extend({
     },
     lblName() {
       if (this.dispLang == "no") {
-        return "Skriv inn ID'en som står på lesetesten din";
+        return "Skriv inn din ID fra lesetesten";
       } else {
-        return "Enter the ID number from your reading test";
+        return "Enter your ID from the reading test";
       }
     },
     lblSchool() {
@@ -173,9 +174,9 @@ export default Vue.extend({
 
     btnNext() {
       if (this.dispLang == "no") {
-        return "Start test";
+        return "Neste";
       } else {
-        return "Start test";
+        return "Next";
       }
     },
     btnPrevious() {
@@ -211,7 +212,7 @@ export default Vue.extend({
           this.$store.state.email = this.email;
         }
         //Goto test
-        this.$router.push("vocabulary-test");
+        this.$router.push("intro-video");
       }
     }
   }
