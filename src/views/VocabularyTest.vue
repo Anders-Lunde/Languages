@@ -2,7 +2,7 @@
   <div style="height: 66%">
     <v-container fill-height fluid>
       <v-row class="" justify="center">
-        <v-col cols="12" md="3" sm="7">
+        <v-col cols="12" md="4" sm="7">
           <v-card>
             <!--Current word / Title -->
             <v-card-title>
@@ -1077,6 +1077,6 @@ export default Vue.extend({
 }
 
 .word {
-  font-size: 220%;
+  font-size: 200%;
 }
 </style>
