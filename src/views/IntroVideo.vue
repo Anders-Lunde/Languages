@@ -6,7 +6,11 @@
       <v-row v-if="showVideo" justify="center">
         <v-card class="mx-auto" max-width="96%">
           <v-card-title>
-            <span class="text-h5  mx-auto font-weight-light">Intro video</span>
+            <span
+              style="word-break: break-word;"
+              class="text-h5  mx-auto font-weight-light"
+              >Intro video</span
+            >
           </v-card-title>
           <v-card-text>
             <video

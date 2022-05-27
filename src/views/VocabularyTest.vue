@@ -38,9 +38,9 @@
               v-if="showLastMessages"
             >
               <v-card-title>
-                <h4 class="bold">
+                <span style="word-break: break-word; font-weight: bold;">
                   {{ txtHeadingForFinalForm }}
-                </h4>
+                </span>
               </v-card-title>
               <v-card-text>
                 <!-- Hva syns du om testen? -->

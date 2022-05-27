@@ -6,9 +6,11 @@
         <v-container fluid>
           <v-card class="mx-auto" max-width="96%">
             <v-card-title>
-              <span class="text-h5  mx-auto font-weight-light">{{
-                registerInfoHeading
-              }}</span>
+              <span
+                style="word-break: break-word;"
+                class="text-h5  mx-auto font-weight-light"
+                >{{ registerInfoHeading }}</span
+              >
             </v-card-title>
             <!--   In which country do you attend school?
             <v-col cols="12" md="7">

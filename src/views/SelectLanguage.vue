@@ -5,7 +5,9 @@
       <v-row>
         <v-card class="mx-auto" max-width="96%">
           <v-card-title>
-            <span class="text-h5 mx-auto font-weight-light "
+            <span
+              style="word-break: break-word;"
+              class="text-h5 mx-auto font-weight-light "
               >Select your language / Velg ønsket språk</span
             >
           </v-card-title>
