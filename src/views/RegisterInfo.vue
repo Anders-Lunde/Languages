@@ -2,7 +2,7 @@
   <div>
     <h1 class="heading1">LANGUAGES</h1>
     <v-col cols="12" md="7" class="mx-auto">
-      <v-form v-model="valid" ref="form">
+      <v-form v-model="valid" ref="form" v-on:submit.prevent="onSubmit">
         <v-container fluid>
           <v-card class="mx-auto" max-width="96%">
             <v-card-title>

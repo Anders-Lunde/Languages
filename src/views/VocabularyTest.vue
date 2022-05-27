@@ -36,7 +36,9 @@
               v-model="isValidFinalForm"
               ref="form"
               v-if="showLastMessages"
+              v-on:submit.prevent="onSubmit"
             >
+              >
               <v-card-title>
                 <span style="word-break: break-word; font-weight: bold;">
                   {{ txtHeadingForFinalForm }}
