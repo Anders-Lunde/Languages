@@ -31,26 +31,17 @@
               ></span>
             </v-card-text>
 
-            <!-- Button to proceed to the very last messages -->
-            <v-card-actions v-if="showFinalFormBtn">
-              <v-btn
-                class="mx-auto"
-                @click="showFinalFormBtnClicked()"
-                color="primary"
-              >
-                {{ txtBtnShowLastMessages }}
-                <span v-if="showFinalFormBtnFirstClick">{{
-                  txtBtnShowLastMessagesSecondClick
-                }}</span>
-              </v-btn>
-            </v-card-actions>
-
             <!-- Very last messages (final result + feedback input field) -->
             <v-form
               v-model="isValidFinalForm"
               ref="form"
               v-if="showLastMessages"
             >
+              <v-card-title>
+                <h4 class="bold">
+                  {{ txtHeadingForFinalForm }}
+                </h4>
+              </v-card-title>
               <v-card-text>
                 <!-- Hva syns du om testen? -->
                 <span
@@ -87,7 +78,7 @@
                 <br />
                 <!-- :disabled="commentsFromUser.length == 0" -->
                 <v-btn
-                  @click="onClickFinishTest()"
+                  @click="onTestFinished()"
                   :disabled="!isValidFinalForm"
                   color="primary"
                 >
@@ -318,9 +309,9 @@ export default Vue.extend({
 
     txtSubmitAndFinish() {
       if (this.dispLang == "no") {
-        return "Send inn og avslutt";
+        return "Vis resultatet mitt";
       } else {
-        return "Submit and finish";
+        return "Show my results";
       }
     },
 
@@ -340,19 +331,11 @@ export default Vue.extend({
       }
     },
 
-    txtBtnShowLastMessages() {
+    txtHeadingForFinalForm() {
       if (this.dispLang == "no") {
-        return "Klikk for neste skjerm. ";
+        return "Nå er testen ferdig. Før du får resultatet ditt lurer vi på:";
       } else {
-        return "Click for next screen. ";
-      }
-    },
-
-    txtBtnShowLastMessagesSecondClick() {
-      if (this.dispLang == "no") {
-        return " Vennligst klikk en gang til.";
-      } else {
-        return " Please click again.";
+        return "The test is complete. Before you get your result we want to know:";
       }
     }
   },
@@ -808,6 +791,7 @@ export default Vue.extend({
         this.setNextWord();
         return; //RETURN
       } else {
+        //IF SET IS DONE:
         this.currentPart += 1;
         this.showUserfeedback = true;
         //Record duration of current set
@@ -836,7 +820,7 @@ export default Vue.extend({
           this.$store.state.setsCompleted = this.currentPart - 1;
           this.$store.state.bandsCompleted = this.currentBandIndex + 1;
           //Goto test finish
-          this.onTestFinished();
+          this.showFinalForm();
         }
       }
     },
@@ -869,6 +853,9 @@ export default Vue.extend({
         this.setNextWord();
         this.tsCurrentSetStart = Date.now();
       } else {
+        console.log(
+          "I DONT THINK THIS EVER EXCECUTES, BECAUSE FINISH IS HANDELED AFTE REACH CLICK OF WORD YES/NO"
+        );
         this.onTestFinished();
       }
     },
@@ -876,7 +863,9 @@ export default Vue.extend({
     /*
      *METHOD START:
      */
-    onTestFinished() {
+    async onTestFinished() {
+      this.showLastMessages = false;
+
       let txtExtraFinalBandNo = "";
       let txtExtraFinalBandEn = "";
 
@@ -906,44 +895,33 @@ export default Vue.extend({
           "<u>Sluttresultat: </u><br>" +
           this.feedbackMessage +
           txtExtraFinalBandNo +
-          "<br><br>Hvis du vil ta vare på resultatet ditt, kan du ta et skjermbilde av denne siden.";
+          "<br><br>Hvis du vil ta vare på resultatet ditt, kan du ta et skjermbilde av denne siden.<br><br>Takk for din deltakelse!";
       } else {
         this.feedbackMessage =
           "<u>Final result: </u><br>" +
           this.feedbackMessage +
           txtExtraFinalBandEn +
-          "<br><br>If you wish to save your result, you may take a screen shot of this page.";
+          "<br><br>If you wish to save your result, you may take a screen shot of this page.<br><br>Thanks for your participation!";
       }
 
       //Save  to vuex
       this.$store.state.currentUserAllDataMap = this.currentUserAllDataMap;
+      this.$store.state.commentsFromUser = this.commentsFromUser;
+      this.$store.state.totalVocabulary = this.totalVocabulary;
+      this.$store.state.selfEstimateFromUser = this.selfEstimateFromUser;
+
+      //Send to server
+      await this.sendTestDataToServer();
 
       this.showFinalFormBtn = true;
-    },
-
-    async onClickFinishTest() {
-      if (this.$refs.form.validate()) {
-        //Save  to vuex
-        this.$store.state.commentsFromUser = this.commentsFromUser;
-        this.$store.state.totalVocabulary = this.totalVocabulary;
-        this.$store.state.selfEstimateFromUser = this.selfEstimateFromUser;
-        //Remove data-set from Vuex before submitting data (words)
-        Vue.delete(this.$store.state, "words");
-        //Send to server
-        await this.sendTestDataToServer();
-        //Goto exit page
-        if (this.debug) {
-          this.$router.push("data-presentation");
-        } else {
-          this.$router.push("exit-screen");
-        }
-      }
     },
 
     /*
      *METHOD START
      */
     async sendTestDataToServer() {
+      //Remove data-set from Vuex before submitting data (words)
+      Vue.delete(this.$store.state, "words");
       /*
       stringify
       ->
@@ -1049,12 +1027,7 @@ export default Vue.extend({
     /*
      *METHOD START:
      */
-    showFinalFormBtnClicked: function() {
-      //Must click twice (to avoid premature clicking)
-      if (this.showFinalFormBtnFirstClick == false) {
-        this.showFinalFormBtnFirstClick = true;
-        return;
-      }
+    showFinalForm: function() {
       this.showLastMessages = true;
       this.showUserfeedback = false;
       this.showFinalFormBtn = false;
