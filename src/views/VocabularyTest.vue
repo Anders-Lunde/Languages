@@ -38,7 +38,6 @@
               v-if="showLastMessages"
               v-on:submit.prevent="onSubmit"
             >
-              >
               <v-card-title>
                 <span style="word-break: break-word; font-weight: bold;">
                   {{ txtHeadingForFinalForm }}
@@ -976,7 +975,13 @@ export default Vue.extend({
         })
         .then(function() {
           vm.showProgressCircularTSDupload = false;
-          alert("Data successfully transmitted :)");
+          /*
+          if (vm.dispLang == "no") {
+            alert("Data levert til server :)");
+          } else {
+            alert("Data successfully transmitted :)");
+          }
+          */
         })
         .catch(function(error) {
           try {
@@ -988,7 +993,7 @@ export default Vue.extend({
               );
             });
           } catch (e) {
-            console.error("Error (Server er kanskje ute av drift)", e);
+            console.error("Error (Server may be out of service)", e);
             alert(
               "Data NOT successfully transmitted :( Please report this error to your teacher. (fetch error: Server might be down, or no internet connection.)"
             );
