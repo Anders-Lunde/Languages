@@ -304,7 +304,7 @@ export default Vue.extend({
       if (this.dispLang == "no") {
         return "(Valgfritt) Hva syns du om testen og resultatet du fikk?";
       } else {
-        return "(Optional) What did you think about this test and the score you got?";
+        return "(Optional) What do you think about this test and the score you got?";
       }
     },
 
@@ -336,7 +336,7 @@ export default Vue.extend({
       if (this.dispLang == "no") {
         return "Nå er testen ferdig. Før du får resultatet ditt lurer vi på:";
       } else {
-        return "The test is complete. Before you get your result we want to know:";
+        return "The test is complete. Before you get your score, we would like to know:";
       }
     }
   },

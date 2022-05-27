@@ -117,7 +117,7 @@ export default Vue.extend({
       if (this.dispLang == "no") {
         return "Testen tar ca. 15 minutter. Jo bedre du gjør det, jo flere deler får du.";
       } else {
-        return "The test lasts ca. 15 minutes. The better you perform, the more parts you get.";
+        return "The test takes about 15 minutes. The better you perform, the more parts you get.";
       }
     }
   },
