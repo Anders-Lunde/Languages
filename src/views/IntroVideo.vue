@@ -123,11 +123,19 @@ export default Vue.extend({
   },
   props: {},
   data() {
+  if(this.$store.state.displayLanguage == "no"){  
     return {
       introductionVideo: require("@/assets/norwegian.mp4"),
       disableBtnNext: true,
       showVideo: true
     };
+  } else {
+    return {
+      introductionVideo: require("@/assets/english.mp4"),
+      disableBtnNext: true,
+      showVideo: true
+    };
+  }
   },
 
   methods: {
