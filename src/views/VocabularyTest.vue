@@ -656,7 +656,7 @@ export default Vue.extend({
       const isPilot = this.$store.state.isPilot;
       const firstOfTwoSetsAndPilot =
         [0, 2].includes(this.currentSetIndex) && isPilot;
-      const firstOfTwoSets = [0, 2].inclues(this.currentSetIndex);
+      const firstOfTwoSets = [0, 2].includes(this.currentSetIndex);
       this.firstOfTwoSets = firstOfTwoSets;
       this.firstOfTwoSetsAndPilot = firstOfTwoSetsAndPilot;
 

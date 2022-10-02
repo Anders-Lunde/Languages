@@ -143,8 +143,8 @@ export default Vue.extend({
     if(this.$store.state.displayLanguage == "no"){
         this.introductionVideo = require("@/assets/norwegian.mp4")
     } else {
-        this.introductionVideo = require("@/assets/english.mp4"),
-           }
+        this.introductionVideo = require("@/assets/english.mp4")
+           
     }
     const video = this.$refs.introductionVideo;
     if (video) {
