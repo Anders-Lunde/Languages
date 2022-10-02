@@ -53,7 +53,7 @@ export default new Vuex.Store({
             "abattir",
             "champile",
             "eltrisse",
-            "gaston",
+            "gestide",
             "imbant",
             "leinte",
             "nadoir",
@@ -96,7 +96,7 @@ export default new Vuex.Store({
             "octe",
             "ralive",
             "taitelle",
-            "écourt"
+            "aige"
           ]
         },
         set3: {
@@ -265,7 +265,7 @@ export default new Vuex.Store({
           nonsense: [
             "brigeable",
             "détrame",
-            "froise",
+            "giste",
             "julir",
             "manchir",
             "optile",

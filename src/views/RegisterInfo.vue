@@ -87,7 +87,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      enableEmailQuestion: false,
+      enableEmailQuestion: true,
       valid: false,
       nextPressed: false,
       fullname: "",

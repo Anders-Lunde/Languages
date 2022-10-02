@@ -123,19 +123,11 @@ export default Vue.extend({
   },
   props: {},
   data() {
-  if(this.$store.state.displayLanguage == "no"){  
     return {
       introductionVideo: require("@/assets/norwegian.mp4"),
       disableBtnNext: true,
       showVideo: true
     };
-  } else {
-    return {
-      introductionVideo: require("@/assets/english.mp4"),
-      disableBtnNext: true,
-      showVideo: true
-    };
-  }
   },
 
   methods: {
@@ -148,6 +140,12 @@ export default Vue.extend({
   },
   mounted() {
     //Loading videos  ensures smooth experience
+    if(this.$store.state.displayLanguage == "no"){
+        this.introductionVideo = require("@/assets/norwegian.mp4")
+    } else {
+        this.introductionVideo = require("@/assets/english.mp4"),
+           }
+    }
     const video = this.$refs.introductionVideo;
     if (video) {
       video.load();

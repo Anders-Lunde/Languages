@@ -367,6 +367,7 @@ export default Vue.extend({
       sets: ["set1", "set2", "set3", "set4", "set5"],
       words: this.$store.state.words,
       firstOfTwoSetsAndPilot: false,
+      firstOfTwoSets: false,
       totalVocabulary: 0,
       averageVocabularySizeForCurrentBand: 0,
       commentsFromUser: "",
@@ -655,6 +656,8 @@ export default Vue.extend({
       const isPilot = this.$store.state.isPilot;
       const firstOfTwoSetsAndPilot =
         [0, 2].includes(this.currentSetIndex) && isPilot;
+      const firstOfTwoSets = [0, 2].inclues(this.currentSetIndex);
+      this.firstOfTwoSets = firstOfTwoSets;
       this.firstOfTwoSetsAndPilot = firstOfTwoSetsAndPilot;
 
       //Figure out value of this.atLeastOneSetInCurrentBandAboveCutoff
@@ -679,7 +682,7 @@ export default Vue.extend({
         this.atLeastOneSetInCurrentBandAboveCutoff
       ) {
         //If this is pilot, and the first of two sets to be forced to take
-        if (firstOfTwoSetsAndPilot) {
+        if (firstOfTwoSets) {
           this.isFullStopOfTest = false;
           if (this.dispLang == "no") {
             msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
@@ -700,7 +703,7 @@ export default Vue.extend({
       //since we want to show the extrapolated value from previous bands
       else if (PercentageForThisSet > 0 || this.currentBandIndex > 0) {
         //If pilot, always force a possible second set, even when low score
-        if (firstOfTwoSetsAndPilot) {
+        if (firstOfTwoSets) {
           this.isFullStopOfTest = false;
           if (this.dispLang == "no") {
             msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
@@ -721,7 +724,7 @@ export default Vue.extend({
       //This is only triggered for the case where this.currentBandIndex == 0 (due to previous conditional)
       else {
         //If pilot, always force a possible second set, even when low score
-        if (firstOfTwoSetsAndPilot) {
+        if (firstOfTwoSets) {
           this.isFullStopOfTest = false;
           if (this.dispLang == "no") {
             msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse. Ta en ny test for å prøve igjen.`;
@@ -751,7 +754,7 @@ export default Vue.extend({
 
       //If there are no more bands/sets
       if (
-        !firstOfTwoSetsAndPilot &&
+        !firstOfTwoSets &&
         this.currentBandIndex + 1 == this.bands.length &&
         this.isSetDone
       ) {
@@ -838,7 +841,7 @@ export default Vue.extend({
         this.currentWordIndex = 0;
 
         //Iterate to next set/band
-        if (this.firstOfTwoSetsAndPilot) {
+        if (this.firstOfTwoSets) {
           this.currentSetIndex += 1;
         } else {
           this.currentBandIndex += 1;
