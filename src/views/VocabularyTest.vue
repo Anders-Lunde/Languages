@@ -741,15 +741,14 @@ export default Vue.extend({
       // with new forcing band 2 rules, this is neccessary.
       if (this.totalVocabulary <= 0) {
         if (this.dispLang == "no") {
-          msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse.`;
+          msg = `Du kan mellom 0 og 80 ord på fransk.`;
         } else {
-          msg = `Sorry, we were unable to estimate your vocabulary size.`;
+          msg = `You know between 0 and 80 words in French`;
         }
       }
 
       //If there are no more bands/sets
       if (
-        !firstOfTwoSets &&
         this.currentBandIndex + 1 == this.bands.length &&
         this.isSetDone
       ) {
