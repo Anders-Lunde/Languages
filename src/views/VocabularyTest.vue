@@ -613,19 +613,19 @@ export default Vue.extend({
       let vocabularySizeForThisSet = 0;
       if (this.currentBandIndex == 0) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)/100)*100;
+          500 * (PercentageForThisSet / 10000)*100);
       } else if (this.currentBandIndex == 1) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)/100)*100;
+          500 * (PercentageForThisSet / 10000)*100);
       } else if (this.currentBandIndex == 2) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)/100)*100;
+          500 * (PercentageForThisSet / 10000)*100);
       } else if (this.currentBandIndex == 3) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)/100)*100;
+          500 * (PercentageForThisSet / 10000)*100);
       } else if (this.currentBandIndex == 4) {
         vocabularySizeForThisSet = Math.round(
-          (1000 * (PercentageForThisSet / 100))/100)*100;
+          1000 * (PercentageForThisSet / 10000)*100);
       } else {
         alert("ERROR: SOMETHING WENT WRONG WITH CALCULATING VOCABULARY SIZE");
         vocabularySizeForThisSet =
@@ -835,8 +835,8 @@ export default Vue.extend({
       if (this.isFullStopOfTest == false) {
         this.currentWordIndex = 0;
 
-        //Iterate to next set/band, if below CUTOFF go to next band
-        if (this.firstOfTwoSets || !(PercentageForThisSet >= CUTOFF) ) {
+        //Iterate to next set/band, if set is not below  go to next band
+        if (this.firstOfTwoSets && !(this.atLeastOneSetInCurrentBandAboveCutoff)) {
           this.currentSetIndex += 1;
         } else {
           this.currentBandIndex += 1;
