@@ -114,9 +114,9 @@ export default Vue.extend({
     },
     lblName() {
       if (this.dispLang == "no") {
-        return "Skriv inn din ID fra lesetesten";
+        return "Navn på elev";
       } else {
-        return "Enter your ID from the reading test";
+        return "Name of student";
       }
     },
     lblSchool() {

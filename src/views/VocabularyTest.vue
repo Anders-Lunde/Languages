@@ -613,24 +613,19 @@ export default Vue.extend({
       let vocabularySizeForThisSet = 0;
       if (this.currentBandIndex == 0) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)
-        );
+          500 * (PercentageForThisSet / 100)/100)*100;
       } else if (this.currentBandIndex == 1) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)
-        );
+          500 * (PercentageForThisSet / 100)/100)*100;
       } else if (this.currentBandIndex == 2) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)
-        );
+          500 * (PercentageForThisSet / 100)/100)*100;
       } else if (this.currentBandIndex == 3) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 100)
-        );
+          500 * (PercentageForThisSet / 100)/100)*100;
       } else if (this.currentBandIndex == 4) {
         vocabularySizeForThisSet = Math.round(
-          1000 * (PercentageForThisSet / 100)
-        );
+          (1000 * (PercentageForThisSet / 100))/100)*100;
       } else {
         alert("ERROR: SOMETHING WENT WRONG WITH CALCULATING VOCABULARY SIZE");
         vocabularySizeForThisSet =
@@ -727,17 +722,17 @@ export default Vue.extend({
         if (firstOfTwoSets) {
           this.isFullStopOfTest = false;
           if (this.dispLang == "no") {
-            msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse. Ta en ny test for å prøve igjen.`;
+            msg = `Du kan mellom 0 og 80 ord på fransk`;
           } else {
-            msg = `Sorry, we were unable to estimate your vocabulary size. Would you like to try again?`;
+            msg = `You know between 0 and 80 words in French`;
           }
         } else {
           this.isFullStopOfTest = true;
           console.log("Full stop set in place = 222");
           if (this.dispLang == "no") {
-            msg = `Beklager! Vi kunne ikke estimere din vokabularstørrelse.`;
+            msg = `Du kan mellom 0 og 80 ord på fransk`;
           } else {
-            msg = `Sorry, we were unable to estimate your vocabulary size.`;
+            msg = `You know between 0 and 80 words in French`;
           }
         }
       }
@@ -778,7 +773,7 @@ export default Vue.extend({
         }. Please proceed to part ${this.currentPart + 1}.`;
       }
       //Force everyone past the first band:
-      if (this.currentBandIndex == 0) {
+      if (this.currentBandIndex == 0 ) {
         this.isFullStopOfTest = false;
       }
       //New display messages:
@@ -840,8 +835,8 @@ export default Vue.extend({
       if (this.isFullStopOfTest == false) {
         this.currentWordIndex = 0;
 
-        //Iterate to next set/band
-        if (this.firstOfTwoSets) {
+        //Iterate to next set/band, if below CUTOFF go to next band
+        if (this.firstOfTwoSets || !(PercentageForThisSet >= CUTOFF) ) {
           this.currentSetIndex += 1;
         } else {
           this.currentBandIndex += 1;
