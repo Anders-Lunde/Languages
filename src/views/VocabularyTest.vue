@@ -613,19 +613,19 @@ export default Vue.extend({
       let vocabularySizeForThisSet = 0;
       if (this.currentBandIndex == 0) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 10000)*100);
+          (500 * (PercentageForThisSet / 100 ))/100)*100;
       } else if (this.currentBandIndex == 1) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 10000)*100);
+          (500 * (PercentageForThisSet / 100))/100)*100;
       } else if (this.currentBandIndex == 2) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 10000)*100);
+          (500 * (PercentageForThisSet / 100))/100)*100;
       } else if (this.currentBandIndex == 3) {
         vocabularySizeForThisSet = Math.round(
-          500 * (PercentageForThisSet / 10000)*100);
+          (500 * (PercentageForThisSet / 100))/100)*100;
       } else if (this.currentBandIndex == 4) {
         vocabularySizeForThisSet = Math.round(
-          1000 * (PercentageForThisSet / 10000)*100);
+          (1000 * (PercentageForThisSet / 100))/100)*100;
       } else {
         alert("ERROR: SOMETHING WENT WRONG WITH CALCULATING VOCABULARY SIZE");
         vocabularySizeForThisSet =
@@ -680,16 +680,16 @@ export default Vue.extend({
         if (firstOfTwoSets) {
           this.isFullStopOfTest = false;
           if (this.dispLang == "no") {
-            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test for å bekrefte resultatet ditt.`;
+            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk.`;
           } else {
-            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French. Take a new test to confirm your results.`;
+            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French.`;
           }
         } else {
           this.isFullStopOfTest = false;
           if (this.dispLang == "no") {
-            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk. Ta en ny test på neste nivå for å utforske nivået ditt.`;
+            msg = `Gratulerer! Du kan minst ${this.totalVocabulary} ord på fransk.`;
           } else {
-            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French. Take a new test at the next level to explore your upper limit.`;
+            msg = `Congratulations! You know at least ${this.totalVocabulary} words in French.`;
           }
         }
       }
@@ -883,11 +883,11 @@ export default Vue.extend({
         "Take a new test at the next level to explore your upper limit.",
         ""
       );
-      this.feedbackMessage = this.feedbackMessage.replace(" minst ", " ca. ");
-      this.feedbackMessage = this.feedbackMessage.replace(
-        " at least ",
-        " ca. "
-      );
+      //this.feedbackMessage = this.feedbackMessage.replace(" minst ", " ca. ");
+      //this.feedbackMessage = this.feedbackMessage.replace(
+      //  " at least ",
+      //  " ca. "
+      //);
       if (this.dispLang == "no") {
         this.feedbackMessage =
           "<u>Sluttresultat: </u><br>" +

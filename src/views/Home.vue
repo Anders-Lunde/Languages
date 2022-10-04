@@ -7,24 +7,10 @@
           <v-card class="mx-auto">
             <v-card-title>
               <span class="text-h5  mx-auto font-weight-light">Select:</span>
-            </v-card-title>
-            <v-card-text>
-              <v-btn block @click="$router.push('/pilot')">
-                Pilot
-              </v-btn>
-              <br />
-              <br />
+              </v-card-title>
               <v-btn block @click="$router.push('/grade9')">
                 Grade 9
               </v-btn>
-              <br />
-              <br />
-
-              <v-btn block @click="$router.push('/grade10')">
-                Grade 10
-              </v-btn>
-              <br />
-              <br />
             </v-card-text>
           </v-card>
         </v-col>
