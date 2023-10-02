@@ -43,21 +43,7 @@
                   {{ txtHeadingForFinalForm }}
                 </span>
               </v-card-title>
-              <v-card-text>
-                <!-- Hva syns du om testen? -->
-                <span
-                  text-color="black"
-                  class="text-h6 mx-auto  font-weight-medium"
-                >
-                  {{ txtWhatDidYouThinkAboutTest }}
-                </span>
-
-                <v-text-field
-                  v-model="commentsFromUser"
-                  :label="txtWriteHere"
-                ></v-text-field>
-                <br />
-                <!-- Hvor mange ord på fransk tror du at du egentlig kan,? -->
+              <!-- Hvor mange ord på fransk tror du at du egentlig kan,? -->
                 <span
                   text-color="black"
                   class="text-h6 mx-auto  font-weight-medium"
@@ -76,6 +62,21 @@
                   <v-radio :label="selfEstimateFromUser4" value="4"></v-radio>
                   <v-radio :label="selfEstimateFromUser5" value="5"></v-radio>
                 </v-radio-group>
+              <v-card-text>
+                <!-- Hva syns du om testen? -->
+                <span
+                  text-color="black"
+                  class="text-h6 mx-auto  font-weight-medium"
+                >
+                  {{ txtWhatDidYouThinkAboutTest }}
+                </span>
+
+                <v-text-field
+                  v-model="commentsFromUser"
+                  :label="txtWriteHere"
+                ></v-text-field>
+                <br />
+                
                 <br />
                 <!-- :disabled="commentsFromUser.length == 0" -->
                 <v-btn
@@ -295,16 +296,16 @@ export default Vue.extend({
     },
     txtHowManyWords() {
       if (this.dispLang == "no") {
-        return "(Obligatorisk) Uavhengig av ditt resultat på denne testen, hvor mange ord på fransk tror du at du egentlig kan, sammenliknet med dine klassekamerater?";
+        return "(Obligatorisk) Hvor mange ord på fransk tror du at du egentlig kan, sammenliknet med dine klassekamerater?";
       } else {
-        return "(Mandatory) Regardless of how you performed on this test, how many French words do you believe you know compared with your classmates?";
+        return "(Mandatory) How many French words do you believe you know compared with your classmates?";
       }
     },
     txtWhatDidYouThinkAboutTest() {
       if (this.dispLang == "no") {
-        return "(Valgfritt) Hva syns du om testen og resultatet du fikk?";
+        return "(Valgfritt) Hva syns du om testen?";
       } else {
-        return "(Optional) What do you think about this test and the score you got?";
+        return "(Optional) What do you think about this test?";
       }
     },
 
