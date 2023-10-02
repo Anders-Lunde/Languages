@@ -43,6 +43,7 @@
                   {{ txtHeadingForFinalForm }}
                 </span>
               </v-card-title>
+              <v-card-text>
               <!-- Hvor mange ord på fransk tror du at du egentlig kan,? -->
                 <span
                   text-color="black"
@@ -62,7 +63,7 @@
                   <v-radio :label="selfEstimateFromUser4" value="4"></v-radio>
                   <v-radio :label="selfEstimateFromUser5" value="5"></v-radio>
                 </v-radio-group>
-              <v-card-text>
+              
                 <!-- Hva syns du om testen? -->
                 <span
                   text-color="black"
