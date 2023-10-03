@@ -10,7 +10,7 @@
               </v-card-title>
               <v-card-text>
               <v-btn block @click="$router.push('/grade9')">
-                Grade 9
+                Start test
               </v-btn>
             </v-card-text>
           </v-card>
